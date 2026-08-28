@@ -1,0 +1,696 @@
+/* =========================================================================
+   PALETA DE COLORES — ¡ACÁ ES DONDE CAMBIAS LOS COLORES DE TODA LA PÁGINA!
+   Estas son "variables CSS": cada una se usa en muchos lugares del archivo
+   con var(--nombre-de-la-variable). Si cambias el valor de una acá arriba,
+   se actualiza automáticamente en TODOS los lugares donde se usa.
+   ========================================================================= */
+:root{
+  --bg-deep:#0a0410;     /* Fondo general de la página (el negro/morado bien oscuro de atrás de todo) */
+  --bg-wine:#22091a;      /* Fondo un poco más claro que el anterior, usado en tarjetas y cajas (vino tinto oscuro) */
+  --rose:#7d0011;         /* Color PRINCIPAL de acento (rosa/rojo): bordes, botones, corazones, texto destacado */
+  --rose-soft:#ff8aa3;    /* Rosa más claro/suave: se usa en textos pequeños tipo "eyebrow" y detalles */
+  --gold:#f4c9a0;         /* Dorado/durazno: se usa en la palabra del mes en la galería y detalles finos */
+  --cream:#f7ecdf;        /* Color del texto principal (blanco hueso/crema) sobre el fondo oscuro */
+  --muted:#c9a8b3;        /* Rosa grisáceo apagado: texto secundario, etiquetas, cosas menos importantes */
+  --glass:rgba(255,255,255,0.05); /* Blanco casi transparente: efecto "vidrio esmerilado" en cajas de texto */
+}
+
+/* Reset básico: todos los elementos usan box-sizing:border-box, así el
+   padding y el border no se suman al ancho/alto que definas. No lo toques. */
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;} /* hace que el scroll entre secciones sea suave, no de golpe */
+
+/* Fondo y tipografía base de toda la página */
+body{
+  margin:0;
+  background:var(--bg-deep);   /* fondo general */
+  color:var(--cream);          /* color de texto por defecto */
+  font-family:'EB Garamond', serif; /* fuente de texto normal (la "elegante" de todo el sitio) */
+  overflow-x:hidden;           /* evita que aparezca scroll horizontal por accidente */
+}
+
+/* Títulos grandes (como "Juntos desde el 4 de marzo") usan esta otra fuente,
+   más ornamentada, distinta a la del texto normal */
+h1,h2,.display{
+  font-family:'Cormorant Garamond', serif;
+  font-weight:500;
+  letter-spacing:0.02em;
+}
+
+/* "eyebrow" = esas palabritas pequeñas en mayúsculas y muy separadas que
+   aparecen arriba de cada sección (ej: "NUESTRO TIEMPO", "PARA HANNAH") */
+.eyebrow{
+  font-family:'EB Garamond', serif;
+  font-size:0.72rem;
+  letter-spacing:0.42em;       /* separación entre letras */
+  text-transform:uppercase;    /* fuerza mayúsculas */
+  color:var(--rose-soft);      /* color rosa suave */
+  opacity:0.85;
+}
+
+/* Cada <section> (Hero, Contador, Mensaje, Galería, etc.) ocupa mínimo toda
+   la pantalla y centra su contenido, tanto vertical como horizontalmente */
+section{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:6vh 6vw;
+  text-align:center;
+}
+
+/* =========================================================================
+   FONDO DE ESTRELLAS (capa fija detrás de toda la página)
+   ========================================================================= */
+#stars{
+  position:fixed;
+  inset:0;                     /* ocupa toda la pantalla (top/right/bottom/left = 0) */
+  z-index:0;                   /* queda detrás de todo el contenido */
+  pointer-events:none;         /* no bloquea los clicks, es solo decorativo */
+  /* Degradado radial del fondo: puedes cambiar estos 3 colores para un
+     fondo distinto (por ejemplo más azul, más morado, etc.) */
+  background:radial-gradient(ellipse at 50% 20%, #2a0d1e 0%, var(--bg-deep) 55%, #050208 100%);
+}
+.star{
+  position:absolute;
+  width:2px;height:2px;
+  background:var(--cream);     /* color de cada estrellita */
+  border-radius:50%;
+  opacity:0.6;
+  animation:twinkle 4s ease-in-out infinite; /* parpadeo */
+}
+@keyframes twinkle{
+  0%,100%{opacity:0.15; transform:scale(1);}
+  50%{opacity:0.95; transform:scale(1.6);}
+}
+.shoot{ /* estrellas fugaces */
+  position:absolute;
+  width:2px;height:2px;
+  background:linear-gradient(90deg, var(--cream), transparent);
+  border-radius:50%;
+  opacity:0;
+  animation:shoot 7s linear infinite;
+}
+@keyframes shoot{
+  0%{opacity:0; transform:translate(0,0) scaleX(1);}
+  2%{opacity:1;}
+  18%{opacity:0; transform:translate(-260px,180px) scaleX(20);}
+  100%{opacity:0;}
+}
+
+/* =========================================================================
+   PUERTA DE PREGUNTAS (pantalla de bienvenida + quiz antes de entrar)
+   ========================================================================= */
+#gate{
+  position:fixed; inset:0; z-index:50;   /* tapa toda la pantalla por encima de todo lo demás */
+  display:flex; align-items:center; justify-content:center;
+  padding:6vw;
+  background:radial-gradient(ellipse at 50% 30%, #2a0d1e 0%, var(--bg-deep) 60%, #050208 100%);
+  transition:opacity 0.7s ease;          /* efecto de desvanecido al pasar la puerta */
+}
+#gate.gate-hidden{ opacity:0; pointer-events:none; } /* clase que se agrega por JS cuando ya se pasó */
+.gate-box{ max-width:420px; width:100%; text-align:center; }
+
+/* Pantalla de bienvenida ("Para la novia más linda del mundo") */
+#gateWelcome{
+  display:flex; flex-direction:column; align-items:center; gap:1.4rem;
+}
+.gate-welcome-heart{
+  font-size:2.4rem; color:var(--rose);   /* corazón grande de la bienvenida */
+  animation:pulse 2.4s ease-in-out infinite;
+}
+.gate-welcome-text{
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(1.6rem,6vw,2.3rem);
+  line-height:1.4;
+}
+#gateQuiz{ display:none; } /* JS lo muestra cuando le dan click a "Continuar" en la bienvenida */
+.gate-q{
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(1.3rem,4.5vw,1.7rem);
+  margin:1.2rem 0 1.6rem;
+  line-height:1.4;
+}
+.gate-input{
+  width:100%;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:6px;
+  color:var(--cream);
+  padding:0.75rem 0.9rem;
+  font-family:'EB Garamond', serif;
+  font-size:1rem;
+  text-align:center;
+  outline:none;
+}
+.gate-input:focus{ border-color:var(--rose); } /* se pone del color de acento al escribir */
+.gate-input.shake{ animation:shake 0.4s; border-color:var(--rose); } /* animación cuando responden mal */
+@keyframes shake{
+  10%,90%{ transform:translateX(-4px); }
+  20%,80%{ transform:translateX(6px); }
+  30%,50%,70%{ transform:translateX(-8px); }
+  40%,60%{ transform:translateX(8px); }
+}
+.gate-msg{ min-height:1.2rem; font-size:0.8rem; margin-top:0.9rem; color:var(--rose-soft); }
+.gate-progress{
+  margin-top:1.8rem; font-size:0.64rem; letter-spacing:0.3em;
+  text-transform:uppercase; color:var(--muted);
+}
+
+/* =========================================================================
+   ADMIN — botón escondido + login + panel de accesos rápidos
+   ========================================================================= */
+
+/* Botón "escondido": un puntito casi invisible en la esquina arriba-izquierda.
+   No dice nada (a propósito), solo se nota un poco al pasar el mouse encima. */
+.admin-trigger{
+  position:fixed;
+  top:0; left:0;
+  width:34px; height:34px;         /* área de click generosa aunque se vea chiquito */
+  z-index:80;                      /* por encima de todo, incluso de la puerta */
+  background:none;
+  border:none;
+  cursor:default;                  /* no delata con el cursor de "mano" que es un botón */
+  opacity:0;                       /* invisible del todo por defecto */
+}
+.admin-trigger:hover{
+  opacity:0.12;                    /* apenas un puntito tenue al pasar el mouse muy cerca */
+  background:radial-gradient(circle, var(--rose) 0%, transparent 70%);
+  cursor:pointer;
+}
+
+/* Pantalla de login del admin (mismo estilo que la puerta de preguntas) */
+#adminLogin{
+  position:fixed; inset:0; z-index:90;
+  display:flex; align-items:center; justify-content:center;
+  padding:6vw;
+  background:rgba(5,2,8,0.92);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+#adminLogin.show{ opacity:1; pointer-events:auto; }
+.admin-box{
+  max-width:320px; width:100%; text-align:center;
+  display:flex; flex-direction:column; gap:0.9rem;
+  background:linear-gradient(165deg, rgba(255,77,115,0.10), rgba(244,201,160,0.05)), var(--bg-wine);
+  border:1px solid rgba(244,201,160,0.25);
+  border-radius:12px;
+  padding:1.8rem 1.5rem;
+}
+.admin-actions{ display:flex; gap:0.6rem; justify-content:center; margin-top:0.3rem; }
+.admin-actions .save-btn{ padding:0.6rem 1.4rem; }
+.admin-actions .reset-btn{ padding:0.6rem 1.2rem; }
+
+/* Panel flotante con accesos rápidos, aparece tras iniciar sesión */
+#adminPanel{
+  position:fixed;
+  top:1rem; left:1rem;
+  z-index:85;
+  display:none;                    /* JS lo cambia a flex con la clase .show */
+  flex-direction:column;
+  gap:0.5rem;
+  background:linear-gradient(165deg, rgba(255,77,115,0.14), rgba(244,201,160,0.06)), var(--bg-wine);
+  border:1px solid rgba(244,201,160,0.35);
+  border-radius:10px;
+  padding:0.9rem;
+  box-shadow:0 15px 35px rgba(0,0,0,0.5);
+  max-width:200px;
+}
+#adminPanel.show{ display:flex; }
+.admin-panel-title{
+  font-size:0.62rem; letter-spacing:0.28em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:0.2rem; text-align:center;
+}
+.admin-panel-btn{
+  background:transparent;
+  border:1px solid rgba(244,201,160,0.3);
+  color:var(--cream);
+  padding:0.45rem 0.7rem;
+  font-family:'EB Garamond', serif;
+  font-size:0.72rem;
+  border-radius:20px;
+  cursor:pointer;
+  transition:background 0.25s ease, border-color 0.25s ease;
+}
+.admin-panel-btn:hover{ background:rgba(255,77,115,0.15); border-color:var(--rose); }
+.admin-panel-close{ color:var(--muted); border-color:transparent; margin-top:0.2rem; }
+
+@media (max-width:480px){
+  #adminPanel{ top:0.6rem; left:0.6rem; max-width:170px; }
+}
+
+/* =========================================================================
+   HERO (portada con el corazón animado de puntitos y los nombres)
+   ========================================================================= */
+#hero{ z-index:1; }
+.heart-wrap{
+  position:relative;
+  width:min(78vw,340px);       /* tamaño del corazón: se adapta a la pantalla, máximo 340px */
+  height:min(78vw,340px);
+  margin-bottom:2.2rem;
+}
+#heartGlow{ /* resplandor detrás del corazón */
+  position:absolute; inset:-40%;
+  background:radial-gradient(circle, rgba(255,60,100,0.35) 0%, rgba(255,60,100,0.08) 45%, transparent 70%);
+  filter:blur(6px);
+  animation:pulse 3.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:0.7; transform:scale(1);}
+  50%{opacity:1; transform:scale(1.06);}
+}
+.heart-dots{ position:absolute; inset:0; }
+.heart-dot{ /* cada puntito individual que forma el corazón */
+  position:absolute;
+  top:50%; left:50%;
+  border-radius:50%;
+  /* Degradado de cada puntito: blanco en el centro hacia un rosa/rojo oscuro
+     en el borde. Cambia estos 3 colores para puntitos de otro tono. */
+  background:radial-gradient(circle at 35% 35%, #ffffff 0%, #9b0000 45%, #5c0101 100%);
+  box-shadow:0 0 6px rgba(255,90,120,0.75); /* brillito alrededor de cada puntito */
+  opacity:0;
+  animation:dotIn 0.6s ease forwards;
+  will-change:transform;
+}
+@keyframes dotIn{ to{ opacity:1; } }
+.heart-center{ /* nombres + tagline en el centro del corazón */
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0.5rem;
+  opacity:0;
+  animation:fadeUp 1.4s ease forwards 2.1s; /* aparece 2.1s después de cargar */
+}
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+.names{
+  font-size:clamp(1.4rem,5vw,2.1rem);
+  letter-spacing:0.06em;
+}
+.tagline{
+  font-size:0.66rem;
+  letter-spacing:0.38em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:0.9;
+}
+.scroll-cue{ /* el texto "Desliza" al final del hero */
+  margin-top:3rem;
+  font-size:0.7rem;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--muted);
+  opacity:0;
+  animation:fadeUp 1s ease forwards 2.8s;
+}
+.scroll-cue span{ /* la lineíta que "gotea" abajo del texto "Desliza" */
+  display:block; margin:0.6rem auto 0; width:1px; height:26px;
+  background:linear-gradient(var(--rose), transparent);
+  animation:drop 1.8s ease-in-out infinite;
+}
+@keyframes drop{ 0%{opacity:0;} 30%{opacity:1;} 100%{opacity:0; transform:translateY(10px);} }
+
+/* =========================================================================
+   CONTADOR (Meses / Días / Horas / Min / Seg)
+   ========================================================================= */
+#contador{ z-index:1; }
+.since{
+  font-size:0.72rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:2.4rem;
+}
+.clock{
+  display:flex; gap:clamp(0.8rem,3vw,2.4rem); flex-wrap:wrap; justify-content:center;
+}
+.unit{ min-width:64px; } /* cada bloque individual (ej: el bloque de "Meses") */
+.unit .num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.1rem,8vw,3.6rem);
+  color:var(--cream);
+  text-shadow:0 0 18px rgba(255,90,120,0.45); /* resplandor rosado detrás del número */
+  line-height:1;
+}
+.unit .lab{ /* la palabra pequeña debajo del número, ej "Meses", "Días" */
+  margin-top:0.4rem;
+  font-size:0.62rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--rose-soft);
+}
+.divider{ /* la lineíta vertical decorativa entre secciones */
+  width:1px; height:130px; margin:3.2rem 0;
+  background:linear-gradient(var(--rose), transparent);
+  opacity:0.5;
+}
+
+/* =========================================================================
+   MENSAJE (las frases de amor en cursiva)
+   ========================================================================= */
+#mensaje{ z-index:1; gap:2.4rem; }
+.phrase{
+  max-width:640px;
+  font-size:clamp(1.5rem,5vw,2.3rem);
+  line-height:1.35;
+  font-style:italic;
+}
+.phrase .accent{ color:var(--rose-soft); font-style:normal; } /* palabras destacadas dentro de la frase */
+.small-heart{ font-size:1.1rem; color:var(--rose); opacity:0.8; }
+
+/* =========================================================================
+   GALERIA (tarjetas de fotos, una por mes)
+   ========================================================================= */
+#galeria{ z-index:1; min-height:auto; padding-top:10vh; padding-bottom:10vh; }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr)); /* 3 columnas en pantallas grandes */
+  gap:1.8rem 1.6rem;
+  max-width:880px;
+  width:100%;
+  margin-top:2.8rem;
+}
+.frame{ /* cada tarjeta individual de la galería */
+  display:flex;
+  flex-direction:column;
+  /* Fondo de la tarjeta: un degradado suave rosa/dorado encima del --bg-wine */
+  background:linear-gradient(165deg, rgba(255,77,115,0.10), rgba(244,201,160,0.05)), var(--bg-wine);
+  border:1px solid rgba(244,201,160,0.22); /* borde doradito tenue */
+  border-radius:8px;
+  padding:10px 10px 14px;
+  box-shadow:0 12px 26px rgba(0,0,0,0.4);
+  transition:transform 0.4s ease, box-shadow 0.4s ease;
+  cursor:pointer; /* mano al pasar el mouse: avisa que se puede hacer click para ver la foto completa */
+}
+.frame:hover{ transform:translateY(-5px); box-shadow:0 18px 34px rgba(0,0,0,0.5); } /* se "levanta" al pasar el mouse */
+.frame .photo{
+  aspect-ratio:4/5;
+  width:100%;
+  border-radius:4px;
+  overflow:hidden;
+  background:var(--bg-wine);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.frame .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+.frame .ph{ /* el placeholder ("Sube tu foto") que se ve si la imagen no carga */
+  color:var(--muted); font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase;
+  display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+}
+.frame .ph svg{ width:20px; height:20px; opacity:0.5; }
+.frame .month{ /* ej: "Marzo 2026" */
+  margin-top:0.7rem;
+  font-size:0.6rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--gold);
+}
+.frame .caption{ /* el recuerdo/descripción de cada mes */
+  margin-top:0.3rem;
+  font-size:0.85rem;
+  font-style:italic;
+  color:var(--muted);
+  line-height:1.4;
+}
+/* Galería responsiva: menos columnas en pantallas chicas */
+@media (max-width:700px){
+  .grid{ grid-template-columns:repeat(2, minmax(0,1fr)); max-width:520px; }
+}
+@media (max-width:420px){
+  .grid{ grid-template-columns:1fr; max-width:280px; }
+}
+
+/* =========================================================================
+   LIGHTBOX — el recuadro que muestra la foto completa al hacer click,
+   decorado con corazones en las 4 esquinas.
+   ========================================================================= */
+#lightbox{
+  position:fixed; inset:0; z-index:70;   /* por encima de casi todo (menos la puerta) */
+  display:flex; align-items:center; justify-content:center;
+  padding:6vw;
+  background:rgba(5,2,8,0.92);           /* fondo oscuro semitransparente detrás del recuadro */
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+#lightbox.show{ opacity:1; pointer-events:auto; } /* JS agrega esta clase al abrir */
+
+.lb-box{ /* el recuadro en sí */
+  position:relative;
+  max-width:520px;
+  width:100%;
+  max-height:88vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  /* Fondo del recuadro: mismo estilo "vino con brillo dorado" que las tarjetas de galería */
+  background:linear-gradient(165deg, rgba(255,77,115,0.14), rgba(244,201,160,0.06)), var(--bg-wine);
+  border:1px solid rgba(244,201,160,0.4);   /* borde dorado, el "marco" del recuadro */
+  border-radius:14px;
+  padding:2.2rem 1.6rem 1.8rem;
+  box-shadow:0 25px 60px rgba(0,0,0,0.6);
+  transform:scale(0.94);
+  transition:transform 0.4s ease;
+}
+#lightbox.show .lb-box{ transform:scale(1); } /* efecto de "acercamiento" al abrir */
+
+/* Corazones decorativos en las 4 esquinas del recuadro (el "margen con corazones") */
+.lb-corner{
+  position:absolute;
+  font-size:1.3rem;
+  color:var(--rose);
+  opacity:0.85;
+  text-shadow:0 0 10px rgba(255,90,120,0.6);
+}
+.lb-tl{ top:-0.6rem; left:-0.6rem; }                       /* esquina arriba-izquierda */
+.lb-tr{ top:-0.6rem; right:-0.6rem; transform:scaleX(-1); } /* arriba-derecha (espejado) */
+.lb-bl{ bottom:-0.6rem; left:-0.6rem; transform:scaleY(-1); } /* abajo-izquierda (espejado) */
+.lb-br{ bottom:-0.6rem; right:-0.6rem; transform:scale(-1,-1); } /* abajo-derecha (espejado en ambos ejes) */
+
+.lb-close{ /* botón "✕" para cerrar */
+  position:absolute;
+  top:0.7rem; right:0.9rem;
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-size:1.1rem;
+  cursor:pointer;
+  transition:color 0.2s ease;
+}
+.lb-close:hover{ color:var(--rose); }
+
+.lb-photo{
+  width:100%;
+  max-height:46vh;             /* un poco menos alto que antes, para dejarle más espacio al texto */
+  border-radius:8px;
+  overflow:hidden;
+  border:1px solid rgba(244,201,160,0.25);
+}
+.lb-photo img{ width:100%; height:100%; max-height:46vh; object-fit:contain; display:block; background:var(--bg-deep); }
+
+.lb-month{ /* ej: "Marzo 2026" dentro del recuadro grande */
+  margin-top:1.1rem;
+  font-size:0.66rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold);
+}
+
+/* Espacio para el texto/recuerdo de la foto. Tiene su propio scroll interno
+   (max-height + overflow-y:auto), así que si escribís un párrafo largo en
+   el "caption" del PHOTOS (script.js), el recuadro no se estira infinito:
+   simplemente aparece una barrita para deslizar dentro de este espacio. */
+.lb-caption{
+  margin-top:0.6rem;
+  max-width:420px;
+  width:100%;
+  max-height:16vh;             /* alto del "cuadrito" de texto largo — subilo si querés más espacio */
+  overflow-y:auto;             /* scroll vertical solo dentro de este espacio si el texto no cabe */
+  padding:0 0.4rem 0.2rem;
+  font-family:'Cormorant Garamond', serif;
+  font-size:1.1rem;
+  font-style:italic;
+  line-height:1.6;
+  color:var(--cream);
+}
+/* Barrita de scroll fina y del color de la página, en vez de la gris por defecto */
+.lb-caption::-webkit-scrollbar{ width:5px; }
+.lb-caption::-webkit-scrollbar-track{ background:transparent; }
+.lb-caption::-webkit-scrollbar-thumb{ background:var(--rose); border-radius:10px; opacity:0.6; }
+
+@media (max-width:480px){
+  .lb-corner{ font-size:1.05rem; }
+  .lb-caption{ font-size:1rem; max-height:20vh; }
+}
+
+/* =========================================================================
+   CUENTANOS (preguntas para Hannah)
+   ========================================================================= */
+#cuentanos{ z-index:1; padding-top:10vh; padding-bottom:10vh; }
+.qa-card{
+  max-width:560px; width:100%; text-align:left;
+  display:flex; flex-direction:column; gap:1.6rem;
+  margin-top:2.4rem;
+}
+.q label{
+  display:block; font-size:0.9rem; color:var(--rose-soft); margin-bottom:0.5rem; letter-spacing:0.02em;
+}
+.q textarea{
+  width:100%; resize:vertical; min-height:56px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:6px;
+  color:var(--cream);
+  font-family:'EB Garamond', serif;
+  font-size:1rem;
+  padding:0.7rem 0.9rem;
+  outline:none;
+}
+.q textarea:focus{ border-color:var(--rose); }
+.save-btn{ /* botón "Guardar" (y reutilizado en otros "Continuar") */
+  align-self:center;
+  margin-top:0.6rem;
+  background:transparent;
+  border:1px solid var(--rose);
+  color:var(--cream);
+  padding:0.7rem 2.2rem;
+  font-family:'EB Garamond', serif;
+  font-size:0.85rem;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  border-radius:30px;
+  cursor:pointer;
+  transition:background 0.3s ease, color 0.3s ease;
+}
+.save-btn:hover{ background:var(--rose); } /* se rellena del color de acento al pasar el mouse */
+.saved-note{
+  text-align:center; font-size:0.78rem; color:var(--gold); opacity:0; height:1rem; transition:opacity 0.4s ease;
+}
+.saved-note.show{ opacity:1; }
+
+/* =========================================================================
+   HISTORIA (resumen que aparece después de guardar las respuestas)
+   ========================================================================= */
+#historia{ z-index:1; padding-top:8vh; padding-bottom:10vh; display:none; }
+#historia.show{ display:flex; } /* JS agrega esta clase cuando hay respuestas guardadas */
+.story-box{
+  max-width:640px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  padding:2.4rem 2rem;
+  font-size:1.15rem;
+  line-height:1.9;
+}
+.story-box b{ color:var(--rose-soft); font-weight:500; } /* las respuestas de Hannah resaltadas en rosa */
+
+/* =========================================================================
+   FOOTER
+   ========================================================================= */
+footer{
+  position:relative; z-index:1;
+  padding:4rem 6vw 3rem;
+  text-align:center;
+  font-size:0.7rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+footer .heartmark{ color:var(--rose); font-size:0.9rem; }
+
+/* =========================================================================
+   BOTONES DE ABAJO DE TODO (Volver a inicio / Reiniciar todo)
+   ========================================================================= */
+.reset-wrap{
+  position:relative; z-index:1;
+  display:flex; justify-content:center;
+  gap:0.9rem;
+  flex-wrap:wrap;
+  padding:0 6vw 4rem;
+}
+.reset-btn{
+  background:transparent;
+  border:1px solid rgba(244,201,160,0.35);
+  color:var(--muted);
+  padding:0.55rem 1.6rem;
+  font-family:'EB Garamond', serif;
+  font-size:0.68rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  border-radius:30px;
+  cursor:pointer;
+  transition:background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.reset-btn:hover{
+  background:rgba(255,77,115,0.12);
+  border-color:var(--rose);
+  color:var(--cream);
+}
+
+/* Botón chiquito del footer para previsualizar la animación de 6 meses.
+   Oculto por defecto (display:none) — JS solo lo muestra (le pone
+   display:inline-block) cuando entrás con la sesión de admin activa,
+   y lo vuelve a esconder al cerrar sesión. Así nadie más que vos puede
+   verlo ni usarlo. */
+.preview-six-btn{
+  display:none;
+  background:none;
+  border:none;
+  color:var(--muted);
+  opacity:0.6;
+  font-size:0.6rem;
+  margin-left:0.5rem;
+  padding:0.2rem 0.3rem;
+  cursor:pointer;
+  vertical-align:middle;
+  transition:opacity 0.3s ease, color 0.3s ease;
+}
+.preview-six-btn:hover{
+  opacity:1;
+  color:var(--rose);
+}
+
+/* =========================================================================
+   ANIMACION "FELICES 6 MESES" (overlay de corazones + texto)
+   ========================================================================= */
+#sixMonths{
+  position:fixed; inset:0; z-index:60;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:1.2rem;
+  background:rgba(10,4,16,0.88);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.8s ease;
+}
+#sixMonths.show{ opacity:1; pointer-events:auto; } /* JS agrega esta clase al cumplirse la fecha (o con el botón de preview) */
+.six-hearts{
+  display:flex; gap:0.7rem;
+  font-size:1.6rem;
+  color:var(--rose);
+}
+.six-hearts span{
+  display:inline-block;
+  opacity:0;
+  animation:sixPop 1.6s ease-in-out infinite;
+}
+/* cada corazón "salta" con un pequeño retraso distinto, para que no todos
+   se muevan exactamente igual al mismo tiempo */
+.six-hearts span:nth-child(1){ animation-delay:0s; }
+.six-hearts span:nth-child(2){ animation-delay:0.15s; }
+.six-hearts span:nth-child(3){ animation-delay:0.3s; }
+.six-hearts span:nth-child(4){ animation-delay:0.45s; }
+.six-hearts span:nth-child(5){ animation-delay:0.6s; }
+@keyframes sixPop{
+  0%{ opacity:0; transform:translateY(10px) scale(0.7); }
+  30%{ opacity:1; transform:translateY(-6px) scale(1.15); }
+  60%{ opacity:1; transform:translateY(0) scale(1); }
+  100%{ opacity:0; transform:translateY(-14px) scale(0.8); }
+}
+.six-text{
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(1.6rem,6vw,2.6rem);
+  text-align:center;
+  line-height:1.4;
+  color:var(--cream);
+  text-shadow:0 0 22px rgba(255,90,120,0.5);
+  opacity:0;
+  animation:fadeUp 1.2s ease forwards 0.3s;
+}
+
+/* Ajustes finos para pantallas de celular chicas */
+@media (max-width:520px){
+  .clock{ gap:1rem; }
+  .divider{ height:90px; margin:2.2rem 0; }
+}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para hannah 6 Meses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=8">
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- ADMIN: botón escondido (esquina arriba-izquierda, casi invisible) -->
+<button id="adminTrigger" class="admin-trigger" aria-label="admin" title=""></button>
+
+<!-- ADMIN: pantalla de login -->
+<div id="adminLogin">
+  <div class="admin-box">
+    <div class="eyebrow">Acceso admin</div>
+    <input type="text" id="adminUser" class="gate-input" placeholder="Usuario" autocomplete="off">
+    <input type="password" id="adminPass" class="gate-input" placeholder="Contraseña" autocomplete="off">
+    <div class="admin-actions">
+      <button class="save-btn" id="adminLoginBtn">Entrar</button>
+      <button class="reset-btn" id="adminCancelBtn">Cancelar</button>
+    </div>
+    <div class="gate-msg" id="adminMsg"></div>
+  </div>
+</div>
+
+<!-- ADMIN: panel con accesos rápidos (aparece tras iniciar sesión) -->
+<div id="adminPanel">
+  <div class="admin-panel-title">Modo admin</div>
+  <button class="admin-panel-btn" id="adminSkipGate">Saltar preguntas</button>
+  <button class="admin-panel-btn" id="adminPreviewSix">Ver animación 6 meses</button>
+  <button class="admin-panel-btn" id="adminRestartGate">Volver a inicio</button>
+  <button class="admin-panel-btn" id="adminResetAll">Reiniciar todo</button>
+  <button class="admin-panel-btn admin-panel-close" id="adminLogout">Cerrar sesión</button>
+</div>
+
+<!-- ANIMACION 6 MESES: aparece automaticamente cuando se cumple la fecha -->
+<div id="sixMonths">
+  <div class="six-hearts">
+    <span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span>
+  </div>
+  <div class="six-text">Felices 6 meses<br>te amo</div>
+</div>
+
+<!-- PUERTA DE PREGUNTAS: hay que responder bien para llegar al corazón -->
+<div id="gate">
+  <div class="gate-box">
+
+    <!-- Pantalla de bienvenida -->
+    <div id="gateWelcome">
+      <div class="gate-welcome-heart">♥</div>
+      <div class="gate-welcome-text">Para la novia<br>más linda del mundo</div>
+      <button class="save-btn" id="gateWelcomeBtn">Continuar</button>
+    </div>
+
+    <!-- Preguntas -->
+    <div id="gateQuiz">
+      <div class="eyebrow">Antes de continuar</div>
+      <div class="gate-q" id="gateQ"></div>
+      <input type="text" id="gateInput" class="gate-input" placeholder="Tu respuesta..." autocomplete="off">
+      <button class="save-btn" id="gateBtn">Continuar</button>
+      <div class="gate-msg" id="gateMsg"></div>
+      <div class="gate-progress" id="gateProgress"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX: recuadro que muestra la foto completa al hacer click en la galería -->
+<div id="lightbox">
+  <div class="lb-box">
+    <div class="lb-corner lb-tl">♥</div>
+    <div class="lb-corner lb-tr">♥</div>
+    <div class="lb-corner lb-bl">♥</div>
+    <div class="lb-corner lb-br">♥</div>
+    <button class="lb-close" id="lbClose" aria-label="Cerrar">✕</button>
+    <div class="lb-photo">
+      <img id="lbImg" src="" alt="">
+    </div>
+    <div class="lb-month" id="lbMonth"></div>
+    <div class="lb-caption" id="lbCaption"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="heart-wrap">
+    <div id="heartGlow"></div>
+    <div class="heart-dots" id="dotGroup"></div>
+    <div class="heart-center">
+      <div class="names display">Samuel &amp; Hannah</div>
+      <div class="tagline"></div>
+    </div>
+  </div>
+  <div class="scroll-cue">Desliza<span></span></div>
+</section>
+
+<!-- CONTADOR -->
+<section id="contador">
+  <div class="eyebrow">Nuestro tiempo</div>
+  <h2 class="display" style="margin:0.6rem 0 0;">Juntos desde el 4 de marzo de 2026</h2>
+  <div class="since">a las 9:00 p.m.</div>
+  <div class="clock">
+    <div class="unit"><div class="num" id="c-months">00</div><div class="lab">Meses</div></div>
+    <div class="unit"><div class="num" id="c-days">00</div><div class="lab">Días</div></div>
+    <div class="unit"><div class="num" id="c-hours">00</div><div class="lab">Horas</div></div>
+    <div class="unit"><div class="num" id="c-mins">00</div><div class="lab">Min</div></div>
+    <div class="unit"><div class="num" id="c-secs">00</div><div class="lab">Seg</div></div>
+  </div>
+</section>
+
+<!-- MENSAJE -->
+<section id="mensaje">
+  <div class="small-heart">❦</div>
+  <div class="phrase">Los dos somos <span class="accent">uno solo</span>.</div>
+  <div class="divider"></div>
+  <div class="phrase">Te amo con el alma, porque el <span class="accent">corazón muere</span>, el alma <span class="accent">no</span>.</div>
+</section>
+
+<!-- GALERIA -->
+<section id="galeria">
+  <div class="eyebrow">Recuerdos</div>
+  <h2 class="display" style="margin:0.6rem 0 0;">Nuestros mese juntos</h2>
+  <div class="grid" id="gallery-grid"></div>
+</section>
+
+<!-- CUENTANOS -->
+<section id="cuentanos">
+  <div class="eyebrow">Para Hannah</div>
+  <h2 class="display" style="margin:0.6rem 0 0;">Cuéntame de nosotros</h2>
+  <div class="qa-card">
+    <div class="q">
+      <label>¿Cuál es tu recuerdo favorito de nosotros hasta ahora?</label>
+      <textarea id="q1" placeholder="Escribe aquí..."></textarea>
+    </div>
+    <div class="q">
+      <label>¿Qué es lo que más amas de estar conmigo?</label>
+      <textarea id="q2" placeholder="Escribe aquí..."></textarea>
+    </div>
+    <div class="q">
+      <label>Si tuvieras que describir estos 6 meses en una palabra, ¿cuál sería?</label>
+      <textarea id="q3" placeholder="Escribe aquí..."></textarea>
+    </div>
+    <div class="q">
+      <label>¿Qué esperas de lo que viene para nosotros?</label>
+      <textarea id="q4" placeholder="Escribe aquí..."></textarea>
+    </div>
+    <button class="save-btn" id="saveBtn">Guardar</button>
+    <div class="saved-note" id="savedNote">Guardado ✦</div>
+  </div>
+</section>
+
+<!-- HISTORIA (se muestra tras guardar) -->
+<section id="historia">
+  <div class="eyebrow">Nuestra historia, en tus palabras</div>
+  <div class="story-box" id="storyBox"></div>
+</section>
+
+<footer>
+  Hecho con amor por Samuel <span class="heartmark">♥</span> para Hannah
+  <button id="previewSixBtn" class="preview-six-btn" title="ver animación" aria-label="Ver animación de 6 meses">♥</button>
+</footer>
+
+<div class="reset-wrap">
+  <button class="reset-btn" id="restartGateBtn">Volver a inicio</button>
+  <button class="reset-btn" id="resetBtn">Reiniciar todo</button>
+</div>
+
+<script src="script.js?v=8"></script>
+</body>
+</html>
