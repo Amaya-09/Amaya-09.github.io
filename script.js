@@ -1,23 +1,11 @@
-/* =========================================================
-   PUERTA DE PREGUNTAS — se debe pasar antes de ver el corazón.
-   EDITA este arreglo con las preguntas y respuestas reales de
-   ustedes. Cada pregunta puede tener varias respuestas válidas
-   (por si la escribe distinto). No distingue mayúsculas ni tildes.
-   ========================================================= */
+
 const GATE_QUESTIONS = [
   { q: '¿Qué día empezamos a salir?', answers: ['4 de marzo', '4 marzo', '04/03', '4/3', 'marzo 4'] },
   { q: '¿Cómo te digo de cariño?', answers: ['Amor', 'Mi bb','Mi reina','Mi chocolatico','Mi chikibaby','Mi princesa','Mi vida',] },
   { q: '¿A donde fue nuestra primer salida juntoso? ', answers: ['Al cine', 'A ver Minecraft', 'Al Centro Comercial Aventura', 'Al cine a ver Minecraft', 'Al cine del Centro Comercial Aventura', 'A ver la película de Minecraft', 'A ver Minecraft al Centro Comercial Aventura', 'Al cine de Aventura', 'A ver Minecraft al cine', 'Al Centro Comercial Aventura a ver una película', 'A ver la película de Minecraft en Aventura', 'Al cine de Aventura a ver la película de Minecraft', 'Cine', 'Minecraft', 'Aventura', 'Al cine de aventura', 'A ver minecraft en el cine', 'Al cc aventura', 'A ver la peli de minecraft', 'Ver minecraft', 'A la peli de minecraft', 'Cine aventura', 'A ver la peli de minecraft al cine', 'Al cine a ver la peli', 'En el cine de aventura', 'A ver minecraft al cc aventura', 'A la pelicula de minecraft', 'Ir al cine', 'Ir a ver minecraft', 'A ver la peli', 'Al cine del cc aventura', 'Ver la peli de minecraft', 'En aventura', 'Al cine con minecraft', 'A la peli de minecraft en aventura', 'Ver minecraft en el cine', 'Al cc aventura a ver minecraft', 'A ver la peli en aventura', 'Cine a ver minecraft', 'A ver la peli al cine de aventura', 'Al cine a ver la peli de minecraft', 'En el centro comercial aventura', 'A ver la peli de minecraft al cc aventura', 'A ver minecraft al cine de aventura', 'Al cine en aventura', 'A ver la peli de minecraft en el cine', 'Ir al cine de aventura', 'Ir a ver la peli de minecraft', 'A ver la pelicula', 'Al centro comercial aventura a ver minecraft', 'Cine de aventura', 'Peli de minecraft', 'Pelicula de minecraft', 'A ver la pelicula al cine', 'Al cine a ver la pelicula', 'A ver minecraft en aventura', 'En el cine de centro comercial aventura', 'A ver la peli de minecraft en el centro comercial aventura', 'Cine en aventura', 'A ver la pelicula de minecraft al cine'] },
 ];
 
-/* =========================================================
-   ACCESO DE ADMINISTRADOR — edita el usuario y la contraseña.
-   Con esto se puede entrar sin responder las preguntas y usar
-   los accesos rápidos del panel de admin (ver más abajo).
-   OJO: esto es solo una traba simple en el navegador, cualquiera
-   que abra el archivo script.js puede llegar a verla — no la uses
-   para nada que necesite seguridad real, es solo para vos.
-   ========================================================= */
+
 const ADMIN_USER = 'Amaya';
 const ADMIN_PASS = 'samuel_1050';
 
@@ -114,12 +102,6 @@ for(let i=0;i<4;i++){
   starsContainer.appendChild(sh);
 }
 
-/* =========================================================
-   CORAZÓN DE PUNTOS — versión ligera.
-   En vez de mover atributos SVG (costoso), cada punto es un
-   div posicionado con transform, que el navegador puede animar
-   usando la GPU sin recalcular el layout en cada cuadro.
-   ========================================================= */
 const dotGroup = document.getElementById('dotGroup');
 const heartWrap = document.querySelector('.heart-wrap');
 const N_DOTS = 90;
@@ -222,9 +204,116 @@ const sixMonthsEl = document.getElementById('sixMonths');
 let sixMonthsShown = false;
 try{ sixMonthsShown = localStorage.getItem('seis-meses-mostrado') === '1'; }catch(e){}
 
+/* ---------- Fuegos artificiales (canvas) ---------- */
+const fwCanvas = document.getElementById('fireworksCanvas');
+const fwCtx = fwCanvas.getContext('2d');
+const FW_COLORS = ['#ff4d73','#ff8aa3','#f4c9a0','#fff2f4','#c9a8ff'];
+let fwParticles = [];
+let fwSpawnTimer = null;
+let fwRafId = null;
+
+function fwResize(){
+  fwCanvas.width = window.innerWidth;
+  fwCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', fwResize);
+
+function fwLaunchBurst(){
+  const x = fwCanvas.width * (0.18 + Math.random()*0.64);
+  const y = fwCanvas.height * (0.16 + Math.random()*0.4);
+  const color = FW_COLORS[Math.floor(Math.random()*FW_COLORS.length)];
+  const count = 34 + Math.floor(Math.random()*14);
+  for(let i=0;i<count;i++){
+    const angle = (Math.PI*2) * (i/count) + Math.random()*0.3;
+    const speed = 1.6 + Math.random()*2.6;
+    fwParticles.push({
+      x, y,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed,
+      alpha: 1,
+      color,
+      size: 1.6 + Math.random()*1.6
+    });
+  }
+}
+
+function fwLoop(){
+  fwCtx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
+  for(let i=fwParticles.length-1;i>=0;i--){
+    const p = fwParticles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.045; // gravedad suave
+    p.vx *= 0.985;
+    p.alpha -= 0.014;
+    if(p.alpha <= 0){ fwParticles.splice(i,1); continue; }
+    fwCtx.globalAlpha = Math.max(p.alpha,0);
+    fwCtx.fillStyle = p.color;
+    fwCtx.shadowColor = p.color;
+    fwCtx.shadowBlur = 8;
+    fwCtx.beginPath();
+    fwCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    fwCtx.fill();
+  }
+  fwCtx.globalAlpha = 1;
+  fwCtx.shadowBlur = 0;
+  fwRafId = requestAnimationFrame(fwLoop);
+}
+
+function startFireworks(){
+  fwResize();
+  fwParticles = [];
+  fwLaunchBurst();
+  fwSpawnTimer = setInterval(fwLaunchBurst, 550);
+  if(!fwRafId) fwLoop();
+}
+function stopFireworks(){
+  clearInterval(fwSpawnTimer);
+  fwSpawnTimer = null;
+  cancelAnimationFrame(fwRafId);
+  fwRafId = null;
+  fwParticles = [];
+  fwCtx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
+}
+
+/* ---------- Corazoncitos que salen cuando la parejita se encuentra ---------- */
+const coupleHeartsEl = document.getElementById('coupleHearts');
+let coupleHeartsTimer = null;
+function spawnCoupleHearts(){
+  if(!coupleHeartsEl) return;
+  coupleHeartsEl.innerHTML = '';
+  coupleHeartsTimer = setTimeout(()=>{
+    for(let i=0;i<10;i++){
+      const h = document.createElement('span');
+      h.className = 'mini-heart';
+      h.textContent = '♥';
+      h.style.setProperty('--dx', (Math.random()*70-35).toFixed(0)+'px');
+      h.style.animationDelay = (Math.random()*0.5)+'s';
+      h.style.fontSize = (0.75+Math.random()*0.8)+'rem';
+      coupleHeartsEl.appendChild(h);
+    }
+  }, 2650); // justo despues del besito
+}
+
+const SIX_ANIMATION_DURATION = 7600; // ms que dura toda la secuencia en pantalla
+let sixHideTimer = null;
+
 function playSixMonthsAnimation(){
+  clearTimeout(sixHideTimer);
+  clearTimeout(coupleHeartsTimer);
+  // "reflow" para que las animaciones CSS (caminata, texto) se reinicien
+  // desde cero cada vez que se llama esta función, no solo la primera vez
+  sixMonthsEl.classList.remove('show');
+  void sixMonthsEl.offsetWidth;
   sixMonthsEl.classList.add('show');
-  setTimeout(()=>{ sixMonthsEl.classList.remove('show'); }, 6000);
+
+  startFireworks();
+  spawnCoupleHearts();
+
+  sixHideTimer = setTimeout(()=>{
+    sixMonthsEl.classList.remove('show');
+    stopFireworks();
+  }, SIX_ANIMATION_DURATION);
 }
 
 function checkSixMonths(now){
@@ -254,12 +343,18 @@ setInterval(tick,1000);
    con el nombre indicado en "file".
    ========================================================= */
 const PHOTOS = [
-  { file:'foto1.jpeg', month:'Marzo 2026',    caption:'El día que todo comenzó.' },
-  { file:'foto2.jpeg', month:'Abril 2026',    caption:'La primera vez que dormiste en mi' },
-  { file:'foto3.jpeg', month:'Mayo 2026',     caption:'Nuestra salida a comer' },
-  { file:'foto4.jpeg', month:'Junio 2026',    caption:'El diaque fuimos a cine de mes' },
-  { file:'foto5.jpeg', month:'Julio 2026',    caption:'En el tesoro' },
-  { file:'foto6.jpeg', month:'Agosto 2026',   caption:'Seis meses, un solo corazón.' },
+  { file:'foto1.jpeg', month:'Marzo 2026',    caption:'El día que todo comenzó.',
+    note:'Todavía me acuerdo de los nervios de los primeros días y de esa sensación inolvidable de que algo muy especial estaba empezando. Gracias por abrirle la puerta a esta historia y por hacer que desde el primer momento todo se sintiera tan hermos y bonito.' },
+  { file:'foto2.jpeg', month:'Abril 2026',    caption:'La primera vez que dormiste en mí',
+    note:'Abril nos regaló algo que no se olvida: la primera vez que te quedaste dormida entre mis brazos. Sentir tu respiración tranquila mientras te abrazaba me hizo entender que tu paz también es la mía. Ese mes aprendí lo que se siente ser tu lugar seguro.' },
+  { file:'foto3.jpeg', month:'Mayo 2026',     caption:'Nuestra salida a comer',
+    note:'A los tres meses ya no hacían falta muchas palabras para entendernos. Un abrazo tuyo se convirtió en mi refugio perfecto y una mirada bastaba para saber lo que el otro pensaba. Gracias por ser esa tranquilidad y alegría que llena mis días.' },
+  { file:'foto4.jpeg', month:'Junio 2026',    caption:'El día que fuimos al cine ese mes',
+    note:'Llegar al cuarto mes me demostró que somos un gran equipo. Entre la rutina, los días ocupados y las pequeñas cosas del día a día, entender que nos apoyamos mutuamente hizo que lo nuestro se volviera aún más fuerte.' },
+  { file:'foto5.jpeg', month:'Julio 2026',    caption:'En el tesoro',
+    note:'Llegar a este quinto mes me ha demostrado que lo bonito de nuestra relación no solo se da por suerte, sino por el esfuerzo y las ganas que ambos le ponemos día a día. Gracias por cuidar lo nuestro, por estar presente y por demostrarme que con ganas y trabajo en equipo podemos lograrlo todo.' },
+  { file:'foto6.jpeg', month:'Agosto 2026',   caption:'Seis meses, un solo corazón.',
+    note:'Y llegamos a agosto: seis meses de nosotros. Seis meses de aprender a querernos mejor cada día, de reír, de crecer juntos y de construir algo que se siente cada vez más de los dos. Feliz seis meses, mi amor... esto apenas empieza.' },
 ];
 
 const galleryGrid = document.getElementById('gallery-grid');
@@ -271,15 +366,24 @@ const lbImg = document.getElementById('lbImg');
 const lbMonth = document.getElementById('lbMonth');
 const lbCaption = document.getElementById('lbCaption');
 const lbClose = document.getElementById('lbClose');
+const lbNoteBtn = document.getElementById('lbNoteBtn');
+const lbNote = document.getElementById('lbNote');
 
 function openLightbox(item){
   lbImg.src = `fotos/${item.file}`;
   lbImg.alt = 'Samuel y Hannah — ' + item.month;
   lbMonth.textContent = item.month;
   lbCaption.textContent = item.caption;
+  lbNote.textContent = item.note || '';
+  lbNote.classList.remove('open');
+  lbNoteBtn.textContent = '💌 Una cartica';
   lightbox.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
+lbNoteBtn.addEventListener('click', ()=>{
+  const open = lbNote.classList.toggle('open');
+  lbNoteBtn.textContent = open ? 'Cerrar cartica' : '💌 Una cartica';
+});
 function closeLightbox(){
   lightbox.classList.remove('show');
   document.body.style.overflow = '';

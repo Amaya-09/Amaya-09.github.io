@@ -510,6 +510,52 @@ section{
 .lb-caption::-webkit-scrollbar-track{ background:transparent; }
 .lb-caption::-webkit-scrollbar-thumb{ background:var(--rose); border-radius:10px; opacity:0.6; }
 
+/* Botón "cartica" y la nota que se despliega debajo al hacer click.
+   El texto de cada cartica se define en script.js (arreglo PHOTOS, campo "note"). */
+.lb-note-btn{
+  margin-top:1rem;
+  background:transparent;
+  border:1px solid var(--rose);
+  color:var(--cream);
+  padding:0.5rem 1.4rem;
+  font-family:'EB Garamond', serif;
+  font-size:0.8rem;
+  letter-spacing:0.1em;
+  border-radius:30px;
+  cursor:pointer;
+  transition:background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+.lb-note-btn:hover{ background:var(--rose); }
+.lb-note-btn:active{ transform:scale(0.96); }
+
+.lb-note{
+  max-width:420px;
+  width:100%;
+  max-height:0;
+  opacity:0;
+  overflow-y:auto;
+  transition:max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease, padding 0.4s ease;
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic;
+  font-size:1.05rem;
+  line-height:1.75;
+  color:var(--cream);
+  text-align:center;
+  background:var(--glass);
+  border:1px solid rgba(244,201,160,0.25);
+  border-radius:10px;
+  padding:0 1.1rem;
+}
+.lb-note.open{
+  max-height:34vh;
+  opacity:1;
+  margin-top:0.9rem;
+  padding:1rem 1.1rem;
+}
+.lb-note::-webkit-scrollbar{ width:5px; }
+.lb-note::-webkit-scrollbar-track{ background:transparent; }
+.lb-note::-webkit-scrollbar-thumb{ background:var(--rose); border-radius:10px; opacity:0.6; }
+
 @media (max-width:480px){
   .lb-corner{ font-size:1.05rem; }
   .lb-caption{ font-size:1rem; max-height:20vh; }
@@ -643,50 +689,178 @@ footer .heartmark{ color:var(--rose); font-size:0.9rem; }
 }
 
 /* =========================================================================
-   ANIMACION "FELICES 6 MESES" (overlay de corazones + texto)
+   ANIMACION "FELICES 6 MESES"
+   fuegos artificiales (canvas) + parejita que camina y se encuentra + texto
    ========================================================================= */
 #sixMonths{
   position:fixed; inset:0; z-index:60;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:1.2rem;
-  background:rgba(10,4,16,0.88);
+  gap:0.6rem;
+  background:radial-gradient(ellipse at 50% 35%, #2a0d1e 0%, rgba(10,4,16,0.94) 55%, rgba(5,2,8,0.97) 100%);
   opacity:0;
+  overflow:hidden;
   pointer-events:none;
   transition:opacity 0.8s ease;
 }
 #sixMonths.show{ opacity:1; pointer-events:auto; } /* JS agrega esta clase al cumplirse la fecha (o con el botón de preview) */
-.six-hearts{
-  display:flex; gap:0.7rem;
-  font-size:1.6rem;
+
+#fireworksCanvas{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  pointer-events:none;
+}
+
+/* ---------- Parejita que camina desde los lados y se encuentra ---------- */
+.six-couple{
+  position:relative;
+  width:min(84vw,400px);
+  height:168px;
+  margin-bottom:0.4rem;
+  z-index:1;
+}
+.muneco{
+  position:absolute;
+  bottom:0;
+  width:82px;
+  opacity:0;
+}
+.muneco .figure{ width:100%; height:auto; display:block;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,0.5)); }
+.muneco-left{ left:calc(50% - 88px); transform:translateX(-160%); }
+.muneco-right{ right:calc(50% - 88px); transform:translateX(160%); }
+
+/* la animacion solo corre mientras #sixMonths tiene la clase "show";
+   asi cada vez que se dispara, el JS quita y vuelve a poner esa clase
+   (con un pequeño "reflow") para que la caminata se repita desde cero */
+#sixMonths.show .muneco-left{
+  animation:walkInLeft 2.2s cubic-bezier(.3,1.3,.6,1) forwards;
+}
+#sixMonths.show .muneco-right{
+  animation:walkInRight 2.2s cubic-bezier(.3,1.3,.6,1) forwards;
+}
+@keyframes walkInLeft{
+  0%{ transform:translateX(-160%) translateY(0); opacity:0; }
+  12%{ opacity:1; }
+  68%{ transform:translateX(6%) translateY(-7px); opacity:1; }
+  84%{ transform:translateX(-2%) translateY(0); }
+  100%{ transform:translateX(0%) translateY(0); opacity:1; }
+}
+@keyframes walkInRight{
+  0%{ transform:translateX(160%) translateY(0); opacity:0; }
+  12%{ opacity:1; }
+  68%{ transform:translateX(-6%) translateY(-7px); opacity:1; }
+  84%{ transform:translateX(2%) translateY(0); }
+  100%{ transform:translateX(0%) translateY(0); opacity:1; }
+}
+.bob{ transform-origin:bottom center; }
+
+/* al llegar, cada quien inclina la cabeza hacia el otro para el besito,
+   y despues vuelve a una animacion de "respirar" suave en bucle */
+#sixMonths.show .muneco-left .bob{
+  animation:
+    kissLeanLeft 1s ease-in-out 2.2s 1 both,
+    bobLoop 1.7s ease-in-out 3.3s infinite;
+}
+#sixMonths.show .muneco-right .bob{
+  animation:
+    kissLeanRight 1s ease-in-out 2.2s 1 both,
+    bobLoop 1.7s ease-in-out 3.3s infinite;
+}
+@keyframes kissLeanLeft{
+  0%{ transform:translateX(0) rotate(0deg); }
+  45%{ transform:translateX(7px) rotate(10deg); }
+  62%{ transform:translateX(7px) rotate(10deg); }
+  100%{ transform:translateX(0) rotate(0deg); }
+}
+@keyframes kissLeanRight{
+  0%{ transform:translateX(0) rotate(0deg); }
+  45%{ transform:translateX(-7px) rotate(-10deg); }
+  62%{ transform:translateX(-7px) rotate(-10deg); }
+  100%{ transform:translateX(0) rotate(0deg); }
+}
+@keyframes bobLoop{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-5px) rotate(-1.5deg); }
+}
+
+/* corazoncito que aparece justo entre los dos en el momento del beso */
+.kiss-pop{
+  position:absolute; top:36px; left:50%;
+  transform:translate(-50%,0) scale(0.2);
+  font-size:1.4rem;
   color:var(--rose);
-}
-.six-hearts span{
-  display:inline-block;
+  text-shadow:0 0 12px rgba(255,90,120,0.85);
   opacity:0;
-  animation:sixPop 1.6s ease-in-out infinite;
+  z-index:3;
 }
-/* cada corazón "salta" con un pequeño retraso distinto, para que no todos
-   se muevan exactamente igual al mismo tiempo */
-.six-hearts span:nth-child(1){ animation-delay:0s; }
-.six-hearts span:nth-child(2){ animation-delay:0.15s; }
-.six-hearts span:nth-child(3){ animation-delay:0.3s; }
-.six-hearts span:nth-child(4){ animation-delay:0.45s; }
-.six-hearts span:nth-child(5){ animation-delay:0.6s; }
-@keyframes sixPop{
-  0%{ opacity:0; transform:translateY(10px) scale(0.7); }
-  30%{ opacity:1; transform:translateY(-6px) scale(1.15); }
-  60%{ opacity:1; transform:translateY(0) scale(1); }
-  100%{ opacity:0; transform:translateY(-14px) scale(0.8); }
+#sixMonths.show .kiss-pop{
+  animation:kissPopAnim 1.3s ease-out 2.5s 1 both;
 }
+@keyframes kissPopAnim{
+  0%{ opacity:0; transform:translate(-50%,0) scale(0.2); }
+  25%{ opacity:1; transform:translate(-50%,-6px) scale(1.35); }
+  55%{ opacity:1; transform:translate(-50%,-10px) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-30px) scale(0.85); }
+}
+
+/* corazoncitos que suben flotando justo despues del beso */
+.couple-hearts{
+  position:absolute; left:50%; bottom:92px;
+  width:0; height:0;
+  z-index:2;
+}
+.mini-heart{
+  position:absolute; left:0; top:0;
+  transform:translate(-50%,0) scale(0.4);
+  color:var(--rose-soft);
+  font-size:1rem;
+  opacity:0;
+  animation:miniHeartUp 1.7s ease-out forwards;
+}
+@keyframes miniHeartUp{
+  0%{ opacity:0; transform:translate(-50%,0) scale(0.4); }
+  18%{ opacity:1; }
+  100%{ opacity:0; transform:translate(calc(-50% + var(--dx,0px)), -78px) scale(1.15); }
+}
+
+/* ---------- Texto: "Felices 6 meses" con brillo dorado + "te amo" en cursiva ---------- */
 .six-text{
-  font-family:'Cormorant Garamond', serif;
-  font-size:clamp(1.6rem,6vw,2.6rem);
   text-align:center;
-  line-height:1.4;
-  color:var(--cream);
-  text-shadow:0 0 22px rgba(255,90,120,0.5);
+  z-index:1;
   opacity:0;
-  animation:fadeUp 1.2s ease forwards 0.3s;
+}
+#sixMonths.show .six-text{
+  animation:sixTextIn 1.1s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:2.5s;
+}
+@keyframes sixTextIn{
+  0%{ opacity:0; transform:translateY(18px) scale(0.94); }
+  100%{ opacity:1; transform:translateY(0) scale(1); }
+}
+.six-text-line1{
+  display:block;
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic;
+  font-size:clamp(1.15rem,4vw,1.6rem);
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  background:linear-gradient(90deg, var(--gold), #fff2d8 45%, var(--gold));
+  background-size:220% auto;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:shine 3.2s linear infinite;
+}
+.six-text-line2{
+  display:block;
+  font-family:'Great Vibes', cursive;
+  font-size:clamp(3.4rem,14vw,5.6rem);
+  line-height:1;
+  margin-top:0.2rem;
+  color:var(--rose);
+  text-shadow:0 0 22px rgba(255,80,120,0.65), 0 0 55px rgba(255,80,120,0.35);
+}
+@keyframes shine{
+  0%{ background-position:0% center; }
+  100%{ background-position:220% center; }
 }
 
 /* Ajustes finos para pantallas de celular chicas */

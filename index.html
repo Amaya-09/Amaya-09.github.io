@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para hannah 6 Meses</title>
+<title>For My love 6 Months</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 28C16 28 3 19.8 3 11.3 3 6.7 6.6 3.5 10.6 3.5c2.6 0 4.9 1.5 5.4 4 0.5-2.5 2.8-4 5.4-4C25.4 3.5 29 6.7 29 11.3 29 19.8 16 28 16 28Z' fill='%23ff4d73'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
@@ -41,10 +42,74 @@
 
 <!-- ANIMACION 6 MESES: aparece automaticamente cuando se cumple la fecha -->
 <div id="sixMonths">
-  <div class="six-hearts">
-    <span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span>
+  <canvas id="fireworksCanvas"></canvas>
+
+  <div class="six-couple">
+    <div class="muneco muneco-left">
+      <div class="bob">
+        <svg viewBox="0 0 70 120" class="figure" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="35" cy="116" rx="20" ry="4" fill="rgba(0,0,0,0.25)"/>
+          <path d="M24 78 L21 108" stroke="#28324a" stroke-width="10" stroke-linecap="round"/>
+          <path d="M46 78 L49 108" stroke="#28324a" stroke-width="10" stroke-linecap="round"/>
+          <ellipse cx="20" cy="110" rx="7" ry="4" fill="#1c2333"/>
+          <ellipse cx="50" cy="110" rx="7" ry="4" fill="#1c2333"/>
+          <path d="M16 48 Q35 34 54 48 L52 82 Q35 92 18 82 Z" fill="#3d5a80"/>
+          <path d="M28 48 Q35 54 42 48 L40 58 Q35 62 30 58 Z" fill="#f6d9b8"/>
+          <path d="M18 54 Q8 62 12 74" stroke="#3d5a80" stroke-width="11" stroke-linecap="round" fill="none"/>
+          <path d="M52 54 Q62 62 58 74" stroke="#3d5a80" stroke-width="11" stroke-linecap="round" fill="none"/>
+          <circle cx="12" cy="76" r="5" fill="#f6d9b8"/>
+          <circle cx="58" cy="76" r="5" fill="#f6d9b8"/>
+          <circle cx="35" cy="24" r="18" fill="#f6d9b8"/>
+          <circle cx="24" cy="30" r="3.2" fill="#ff9fae" opacity="0.55"/>
+          <circle cx="46" cy="30" r="3.2" fill="#ff9fae" opacity="0.55"/>
+          <path d="M26 22 q3 3.4 6 0" stroke="#2b2b2b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M38 22 q3 3.4 6 0" stroke="#2b2b2b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M30 33 Q35 37 40 33" stroke="#a05a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M15 18 Q20 2 35 4 Q50 2 55 18 Q52 8 35 9 Q18 8 15 18 Z" fill="#3a2a20"/>
+          <path d="M15 18 Q18 10 24 12" stroke="#3a2a20" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M55 18 Q52 10 46 12" stroke="#3a2a20" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="kiss-pop" id="kissPop">♥</div>
+    <div class="couple-hearts" id="coupleHearts"></div>
+
+    <div class="muneco muneco-right">
+      <div class="bob">
+        <svg viewBox="0 0 70 120" class="figure" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="dressGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ff8aa3"/>
+              <stop offset="100%" stop-color="#ff2f57"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="35" cy="116" rx="20" ry="4" fill="rgba(0,0,0,0.25)"/>
+          <path d="M14 50 Q35 36 56 50 L64 100 Q35 112 6 100 Z" fill="url(#dressGrad)"/>
+          <path d="M25 62 Q35 68 45 62" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.5"/>
+          <path d="M17 56 Q7 64 11 76" stroke="url(#dressGrad)" stroke-width="10" stroke-linecap="round" fill="none"/>
+          <path d="M53 56 Q63 64 59 76" stroke="url(#dressGrad)" stroke-width="10" stroke-linecap="round" fill="none"/>
+          <circle cx="11" cy="78" r="5" fill="#f6d9b8"/>
+          <circle cx="59" cy="78" r="5" fill="#f6d9b8"/>
+          <circle cx="35" cy="24" r="18" fill="#f6d9b8"/>
+          <circle cx="24" cy="30" r="3.2" fill="#ff9fae" opacity="0.55"/>
+          <circle cx="46" cy="30" r="3.2" fill="#ff9fae" opacity="0.55"/>
+          <path d="M25 21 q3 3.4 6 0" stroke="#2b2b2b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M39 21 q3 3.4 6 0" stroke="#2b2b2b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M30 33 Q35 37 40 33" stroke="#a05a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M13 22 Q10 46 18 58 Q14 40 20 24 Z" fill="#4a2038"/>
+          <path d="M57 22 Q60 46 52 58 Q56 40 50 24 Z" fill="#4a2038"/>
+          <path d="M14 16 Q20 0 35 2 Q50 0 56 16 Q52 4 35 6 Q18 4 14 16 Z" fill="#4a2038"/>
+          <path d="M35 3 l-6 -5 q6 -3 6 2 q0 -5 6 -2 Z" fill="#ff4d73"/>
+        </svg>
+      </div>
+    </div>
   </div>
-  <div class="six-text">Felices 6 meses<br>te amo</div>
+
+  <div class="six-text">
+    <span class="six-text-line1">Felices 6 meses</span>
+    <span class="six-text-line2">te amo</span>
+  </div>
 </div>
 
 <!-- PUERTA DE PREGUNTAS: hay que responder bien para llegar al corazón -->
@@ -84,6 +149,8 @@
     </div>
     <div class="lb-month" id="lbMonth"></div>
     <div class="lb-caption" id="lbCaption"></div>
+    <button class="lb-note-btn" id="lbNoteBtn">💌 Una cartica</button>
+    <div class="lb-note" id="lbNote"></div>
   </div>
 </div>
 
