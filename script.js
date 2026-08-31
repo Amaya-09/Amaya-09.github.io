@@ -1,11 +1,23 @@
-
+/* =========================================================
+   PUERTA DE PREGUNTAS — se debe pasar antes de ver el corazón.
+   EDITA este arreglo con las preguntas y respuestas reales de
+   ustedes. Cada pregunta puede tener varias respuestas válidas
+   (por si la escribe distinto). No distingue mayúsculas ni tildes.
+   ========================================================= */
 const GATE_QUESTIONS = [
   { q: '¿Qué día empezamos a salir?', answers: ['4 de marzo', '4 marzo', '04/03', '4/3', 'marzo 4'] },
   { q: '¿Cómo te digo de cariño?', answers: ['Amor', 'Mi bb','Mi reina','Mi chocolatico','Mi chikibaby','Mi princesa','Mi vida',] },
   { q: '¿A donde fue nuestra primer salida juntoso? ', answers: ['Al cine', 'A ver Minecraft', 'Al Centro Comercial Aventura', 'Al cine a ver Minecraft', 'Al cine del Centro Comercial Aventura', 'A ver la película de Minecraft', 'A ver Minecraft al Centro Comercial Aventura', 'Al cine de Aventura', 'A ver Minecraft al cine', 'Al Centro Comercial Aventura a ver una película', 'A ver la película de Minecraft en Aventura', 'Al cine de Aventura a ver la película de Minecraft', 'Cine', 'Minecraft', 'Aventura', 'Al cine de aventura', 'A ver minecraft en el cine', 'Al cc aventura', 'A ver la peli de minecraft', 'Ver minecraft', 'A la peli de minecraft', 'Cine aventura', 'A ver la peli de minecraft al cine', 'Al cine a ver la peli', 'En el cine de aventura', 'A ver minecraft al cc aventura', 'A la pelicula de minecraft', 'Ir al cine', 'Ir a ver minecraft', 'A ver la peli', 'Al cine del cc aventura', 'Ver la peli de minecraft', 'En aventura', 'Al cine con minecraft', 'A la peli de minecraft en aventura', 'Ver minecraft en el cine', 'Al cc aventura a ver minecraft', 'A ver la peli en aventura', 'Cine a ver minecraft', 'A ver la peli al cine de aventura', 'Al cine a ver la peli de minecraft', 'En el centro comercial aventura', 'A ver la peli de minecraft al cc aventura', 'A ver minecraft al cine de aventura', 'Al cine en aventura', 'A ver la peli de minecraft en el cine', 'Ir al cine de aventura', 'Ir a ver la peli de minecraft', 'A ver la pelicula', 'Al centro comercial aventura a ver minecraft', 'Cine de aventura', 'Peli de minecraft', 'Pelicula de minecraft', 'A ver la pelicula al cine', 'Al cine a ver la pelicula', 'A ver minecraft en aventura', 'En el cine de centro comercial aventura', 'A ver la peli de minecraft en el centro comercial aventura', 'Cine en aventura', 'A ver la pelicula de minecraft al cine'] },
 ];
 
-
+/* =========================================================
+   ACCESO DE ADMINISTRADOR — edita el usuario y la contraseña.
+   Con esto se puede entrar sin responder las preguntas y usar
+   los accesos rápidos del panel de admin (ver más abajo).
+   OJO: esto es solo una traba simple en el navegador, cualquiera
+   que abra el archivo script.js puede llegar a verla — no la uses
+   para nada que necesite seguridad real, es solo para vos.
+   ========================================================= */
 const ADMIN_USER = 'Amaya';
 const ADMIN_PASS = 'samuel_1050';
 
@@ -65,21 +77,20 @@ function passGate(){
   document.body.style.overflow = '';
   gateEl.classList.add('gate-hidden');
   setTimeout(()=>{ gateEl.style.display = 'none'; }, 700);
-  try{ localStorage.setItem('puerta-superada', '1'); }catch(e){}
 }
 
 document.getElementById('gateBtn').addEventListener('click', checkGate);
 gateInput.addEventListener('keydown', e => { if(e.key === 'Enter') checkGate(); });
 
-let yaSuperada = false;
-try{ yaSuperada = localStorage.getItem('puerta-superada') === '1'; }catch(e){}
-if(yaSuperada){
-  gateEl.style.display = 'none';
-}else{
-  document.body.style.overflow = 'hidden';
-  gateWelcomeEl.style.display = 'flex';
-  gateQuizEl.style.display = 'none';
-}
+/* La página siempre arranca desde cero: ya no se recuerda si la puerta
+   fue superada antes, así que cada vez que se entra, se recarga, o se
+   sale y se vuelve a entrar, aparece la pantalla de bienvenida de nuevo. */
+document.body.style.overflow = 'hidden';
+gateEl.style.display = 'flex';
+gateEl.classList.remove('gate-hidden');
+gateIndex = 0;
+gateWelcomeEl.style.display = 'flex';
+gateQuizEl.style.display = 'none';
 
 /* ---------- Estrellas de fondo ---------- */
 const starsContainer = document.getElementById('stars');
@@ -102,6 +113,12 @@ for(let i=0;i<4;i++){
   starsContainer.appendChild(sh);
 }
 
+/* =========================================================
+   CORAZÓN DE PUNTOS — versión ligera.
+   En vez de mover atributos SVG (costoso), cada punto es un
+   div posicionado con transform, que el navegador puede animar
+   usando la GPU sin recalcular el layout en cada cuadro.
+   ========================================================= */
 const dotGroup = document.getElementById('dotGroup');
 const heartWrap = document.querySelector('.heart-wrap');
 const N_DOTS = 90;
@@ -344,17 +361,17 @@ setInterval(tick,1000);
    ========================================================= */
 const PHOTOS = [
   { file:'foto1.jpeg', month:'Marzo 2026',    caption:'El día que todo comenzó.',
-    note:'Todavía me acuerdo de los nervios de los primeros días y de esa sensación inolvidable de que algo muy especial estaba empezando. Gracias por abrirle la puerta a esta historia y por hacer que desde el primer momento todo se sintiera tan hermos y bonito.' },
+    note:'Marzo fue el mes en que nuestros caminos decidieron cruzarse para siempre. No sabíamos que un simple "sí" iba a cambiarlo todo, pero desde ese momento algo en mí supo que quería quedarme. Gracias por decir que sí, mi amor.' },
   { file:'foto2.jpeg', month:'Abril 2026',    caption:'La primera vez que dormiste en mí',
     note:'Abril nos regaló algo que no se olvida: la primera vez que te quedaste dormida entre mis brazos. Sentir tu respiración tranquila mientras te abrazaba me hizo entender que tu paz también es la mía. Ese mes aprendí lo que se siente ser tu lugar seguro.' },
   { file:'foto3.jpeg', month:'Mayo 2026',     caption:'Nuestra salida a comer',
-    note:'A los tres meses ya no hacían falta muchas palabras para entendernos. Un abrazo tuyo se convirtió en mi refugio perfecto y una mirada bastaba para saber lo que el otro pensaba. Gracias por ser esa tranquilidad y alegría que llena mis días.' },
+    note:'En mayo nos sentamos a comer juntos como si lleváramos toda una vida haciéndolo. Entre risas, planes y miradas, confirmé algo que ya sospechaba: contigo hasta lo simple se vuelve mi momento favorito del día.' },
   { file:'foto4.jpeg', month:'Junio 2026',    caption:'El día que fuimos al cine ese mes',
-    note:'Llegar al cuarto mes me demostró que somos un gran equipo. Entre la rutina, los días ocupados y las pequeñas cosas del día a día, entender que nos apoyamos mutuamente hizo que lo nuestro se volviera aún más fuerte.' },
+    note:'Junio fue palomitas, pantalla grande y tu mano en la mía en la oscuridad del cine. No recuerdo bien de qué trataba la película, porque estaba más ocupado mirándote a ti de reojo. Esa noche fue perfecta solo por tenerte cerca.' },
   { file:'foto5.jpeg', month:'Julio 2026',    caption:'En el tesoro',
-    note:'Llegar a este quinto mes me ha demostrado que lo bonito de nuestra relación no solo se da por suerte, sino por el esfuerzo y las ganas que ambos le ponemos día a día. Gracias por cuidar lo nuestro, por estar presente y por demostrarme que con ganas y trabajo en equipo podemos lograrlo todo.' },
+    note:'Julio nos llevó a nuestro pequeño tesoro, ese lugar que ahora es solo nuestro. Fue un mes de aventuras, de descubrir juntos, y de guardar un recuerdo más en esta colección que estamos construyendo los dos.' },
   { file:'foto6.jpeg', month:'Agosto 2026',   caption:'Seis meses, un solo corazón.',
-    note:'Y llegamos a agosto: seis meses de nosotros. Seis meses de aprender a querernos mejor cada día, de reír, de crecer juntos y de construir algo que se siente cada vez más de los dos. Feliz seis meses, mi amor... esto apenas empieza.' },
+    note:'Y llegamos a agosto: seis meses de nosotros. Seis meses de aprender a querernos mejor cada día, de reír, de crecer juntos y de construir algo que se siente cada vez más de los dos. Feliz seis meses, mi amor — esto apenas empieza.' },
 ];
 
 const galleryGrid = document.getElementById('gallery-grid');
@@ -528,8 +545,8 @@ function tryAdminLogin(){
     closeAdminLogin();
     adminPanel.classList.add('show');
     if(previewBtn) previewBtn.style.display = 'inline-block'; // solo visible en modo admin
-    // Salta la puerta visualmente nada más (sesión actual), sin tocar
-    // localStorage — así el "puerta-superada" real sigue intacto.
+    // Salta la puerta visualmente nada más (solo para esta sesión de admin);
+    // al recargar o cerrar sesión de admin, todo vuelve a empezar desde cero.
     document.body.style.overflow = '';
     gateEl.classList.add('gate-hidden');
     setTimeout(()=>{ gateEl.style.display = 'none'; }, 700);
@@ -562,4 +579,5 @@ document.getElementById('adminResetAll').addEventListener('click', ()=>{
 document.getElementById('adminLogout').addEventListener('click', ()=>{
   adminPanel.classList.remove('show');
   if(previewBtn) previewBtn.style.display = 'none'; // se esconde de nuevo al cerrar sesión
+  document.getElementById('restartGateBtn').click(); // al dejar de ser admin, vuelve todo al inicio
 });
