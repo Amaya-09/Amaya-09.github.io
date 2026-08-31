@@ -361,15 +361,15 @@ setInterval(tick,1000);
    ========================================================= */
 const PHOTOS = [
   { file:'foto1.jpeg', month:'Marzo 2026',    caption:'El día que todo comenzó.',
-    note:'Marzo fue el mes en que nuestros caminos decidieron cruzarse para siempre. No sabíamos que un simple "sí" iba a cambiarlo todo, pero desde ese momento algo en mí supo que quería quedarme. Gracias por decir que sí, mi amor.' },
+    note:'Todavía me acuerdo de los nervios de los primeros días y de esa sensación inconfundible de que algo muy especial estaba empezando. Gracias por abrirle la puerta a esta historia y por hacer que desde el primer momento todo se sintiera tan natural y bonito.' },
   { file:'foto2.jpeg', month:'Abril 2026',    caption:'La primera vez que dormiste en mí',
     note:'Abril nos regaló algo que no se olvida: la primera vez que te quedaste dormida entre mis brazos. Sentir tu respiración tranquila mientras te abrazaba me hizo entender que tu paz también es la mía. Ese mes aprendí lo que se siente ser tu lugar seguro.' },
   { file:'foto3.jpeg', month:'Mayo 2026',     caption:'Nuestra salida a comer',
-    note:'En mayo nos sentamos a comer juntos como si lleváramos toda una vida haciéndolo. Entre risas, planes y miradas, confirmé algo que ya sospechaba: contigo hasta lo simple se vuelve mi momento favorito del día.' },
+    note:'A los tres meses ya no hacían falta muchas palabras para entendernos. Un abrazo tuyo se convirtió en mi refugio perfecto y una mirada bastaba para saber lo que el otro pensaba. Gracias por ser esa tranquilidad y alegría que llena mis días.' },
   { file:'foto4.jpeg', month:'Junio 2026',    caption:'El día que fuimos al cine ese mes',
-    note:'Junio fue palomitas, pantalla grande y tu mano en la mía en la oscuridad del cine. No recuerdo bien de qué trataba la película, porque estaba más ocupado mirándote a ti de reojo. Esa noche fue perfecta solo por tenerte cerca.' },
+    note:'Llegar al cuarto mes me demostró que somos un gran equipo. Entre la rutina, los días ocupados y las pequeñas cosas del día a día, entender que nos apoyamos mutuamente hizo que lo nuestro se volviera aún más fuerte.' },
   { file:'foto5.jpeg', month:'Julio 2026',    caption:'En el tesoro',
-    note:'Julio nos llevó a nuestro pequeño tesoro, ese lugar que ahora es solo nuestro. Fue un mes de aventuras, de descubrir juntos, y de guardar un recuerdo más en esta colección que estamos construyendo los dos.' },
+    note:'Llegar a este quinto mes me ha demostrado que lo bonito de nuestra relación no solo se da por suerte, sino por el esfuerzo y las ganas que ambos le ponemos día a día. Gracias por cuidar lo nuestro, por estar presente y por demostrarme que con ganas y trabajo en equipo podemos lograrlo todo.' },
   { file:'foto6.jpeg', month:'Agosto 2026',   caption:'Seis meses, un solo corazón.',
     note:'Y llegamos a agosto: seis meses de nosotros. Seis meses de aprender a querernos mejor cada día, de reír, de crecer juntos y de construir algo que se siente cada vez más de los dos. Feliz seis meses, mi amor — esto apenas empieza.' },
 ];
