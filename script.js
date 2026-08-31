@@ -361,7 +361,7 @@ setInterval(tick,1000);
    ========================================================= */
 const PHOTOS = [
   { file:'foto1.jpeg', month:'Marzo 2026',    caption:'El día que todo comenzó.',
-    note:'Todavía me acuerdo de los nervios de los primeros días y de esa sensación inconfundible de que algo muy especial estaba empezando. Gracias por abrirle la puerta a esta historia y por hacer que desde el primer momento todo se sintiera tan natural y bonito.' },
+    note:'Todavía me acuerdo de los nervios de los primeros días y de esa sensación inolvidable de que algo muy especial estaba empezando. Gracias por abrirle la puerta a esta historia y por hacer que desde el primer momento todo se sintiera tan hermoso y bonito.' },
   { file:'foto2.jpeg', month:'Abril 2026',    caption:'La primera vez que dormiste en mí',
     note:'Abril nos regaló algo que no se olvida: la primera vez que te quedaste dormida entre mis brazos. Sentir tu respiración tranquila mientras te abrazaba me hizo entender que tu paz también es la mía. Ese mes aprendí lo que se siente ser tu lugar seguro.' },
   { file:'foto3.jpeg', month:'Mayo 2026',     caption:'Nuestra salida a comer',
