@@ -204,6 +204,20 @@ section{
 .admin-actions .save-btn{ padding:0.6rem 1.4rem; }
 .admin-actions .reset-btn{ padding:0.6rem 1.2rem; }
 
+/* Separador entre el login de admin y el campo de nombre para tu novia */
+.admin-divider{
+  display:flex; align-items:center; gap:0.8rem;
+  margin:0.2rem 0;
+  color:var(--muted);
+  font-size:0.7rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+}
+.admin-divider::before, .admin-divider::after{
+  content:''; flex:1; height:1px;
+  background:rgba(255,255,255,0.12);
+}
+
 /* Panel flotante con accesos rápidos, aparece tras iniciar sesión */
 #adminPanel{
   position:fixed;

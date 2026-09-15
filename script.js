@@ -30,6 +30,13 @@ const GATE_QUESTIONS = [
 const ADMIN_USER = 'Amaya';
 const ADMIN_PASS = 'samuel_1050';
 
+/* Nombre de tu novia — si lo escribe en el campo "Eres tú, mi amor?"
+   se saltan las preguntas y puede volver a ver la página las veces que
+   quiera, pero NO obtiene el panel de administrador: solo se le muestra
+   el corazoncito escondido del pie de página para repetir la animación
+   de los 6 meses. EDITA este nombre si quieres cambiarlo. */
+const GUEST_NAME = 'Hannah';
+
 function normalize(str){
   return str.toString().trim().toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -539,12 +546,16 @@ const adminUserIn   = document.getElementById('adminUser');
 const adminPassIn   = document.getElementById('adminPass');
 const adminMsg      = document.getElementById('adminMsg');
 const adminPanel    = document.getElementById('adminPanel');
+const guestNameIn   = document.getElementById('guestName');
+const guestMsg      = document.getElementById('guestMsg');
 
 function openAdminLogin(){
   adminLoginEl.classList.add('show');
   adminUserIn.value = '';
   adminPassIn.value = '';
   adminMsg.textContent = '';
+  guestNameIn.value = '';
+  guestMsg.textContent = '';
   adminUserIn.focus();
 }
 function closeAdminLogin(){ adminLoginEl.classList.remove('show'); }
@@ -565,11 +576,28 @@ function tryAdminLogin(){
   }
 }
 
+/* Modo invitada: solo salta las preguntas y muestra el corazón del
+   footer para repetir la animación — sin panel de administrador. */
+function tryGuestEntry(){
+  if(normalize(guestNameIn.value) === normalize(GUEST_NAME)){
+    closeAdminLogin();
+    if(previewBtn) previewBtn.style.display = 'inline-block'; // puede repetir la animación de los 6 meses
+    document.body.style.overflow = '';
+    gateEl.classList.add('gate-hidden');
+    setTimeout(()=>{ gateEl.style.display = 'none'; }, 700);
+  }else{
+    guestMsg.textContent = 'Ese no es tu nombre... inténtalo de nuevo.';
+    guestNameIn.value = '';
+  }
+}
+
 adminTrigger.addEventListener('click', openAdminLogin);
 document.getElementById('adminCancelBtn').addEventListener('click', closeAdminLogin);
 document.getElementById('adminLoginBtn').addEventListener('click', tryAdminLogin);
+document.getElementById('guestEnterBtn').addEventListener('click', tryGuestEntry);
 adminPassIn.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryAdminLogin(); });
 adminUserIn.addEventListener('keydown', e=>{ if(e.key === 'Enter') adminPassIn.focus(); });
+guestNameIn.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryGuestEntry(); });
 
 /* Accesos rápidos del panel — reutilizan las mismas funciones/botones
    que ya existen en la página, para no duplicar lógica. */
