@@ -28,7 +28,7 @@ const GATE_QUESTIONS = [
    para nada que necesite seguridad real, es solo para vos.
    ========================================================= */
 const ADMIN_USER = 'Amaya';
-const ADMIN_PASS = 'samuel_1050';
+const ADMIN_PASS = 'Hanna_1050';
 
 /* Nombre de tu novia — si lo escribe en el campo "Eres tú, mi amor?"
    se saltan las preguntas y puede volver a ver la página las veces que
