@@ -223,6 +223,7 @@ function tick(){
   document.getElementById('c-mins').textContent = pad(mins);
   document.getElementById('c-secs').textContent = pad(secs);
   checkSixMonths(now);
+  checkMilestones(now);
 }
 
 /* =========================================================
@@ -359,11 +360,279 @@ function checkSixMonths(now){
 }
 sixMonthsEl.addEventListener('click', ()=> sixMonthsEl.classList.remove('show'));
 
+/* =========================================================
+   HITOS — animaciones para 7, 8, 9, 10, 11 meses y 1 año.
+   Los 6 meses ya tienen su propia animación arriba (la parejita)
+   y no están en esta lista.
+
+   EDITA el arreglo MILESTONES para cambiar el texto de cada hito
+   ("line1" = palabra chica arriba, "line2" = palabra grande en
+   cursiva) o el tipo de partículas ("theme"): 'hearts' (corazones
+   cayendo), 'balloons' (globos subiendo), 'stars' (estrellitas
+   titilando), 'petals' (pétalos cayendo), 'bubbles' (burbujas) o
+   'fireworks-gold' (fuegos artificiales dorados, para el año).
+   ========================================================= */
+const MILESTONES = [
+  { key:'seven',  months:7,  line1:'Siete meses',  line2:'gracias',     theme:'hearts'          },
+  { key:'eight',  months:8,  line1:'Ocho meses',   line2:'creciendo',   theme:'balloons'        },
+  { key:'nine',   months:9,  line1:'Nueve meses',  line2:'juntos',      theme:'stars'           },
+  { key:'ten',    months:10, line1:'Diez meses',   line2:'por ti',      theme:'petals'          },
+  { key:'eleven', months:11, line1:'Once meses',   line2:'casi un año', theme:'bubbles'         },
+  { key:'year',   months:12, line1:'Un año',       line2:'te amo',      theme:'fireworks-gold'  },
+];
+MILESTONES.forEach(m=>{
+  m.date = new Date(START);
+  m.date.setMonth(m.date.getMonth() + m.months);
+  try{ m.shown = localStorage.getItem('hito-'+m.key+'-mostrado') === '1'; }
+  catch(e){ m.shown = false; }
+});
+
+/* ---------- Motor de partículas (una sola pantalla, varios efectos) ---------- */
+const milestoneEl = document.getElementById('milestoneOverlay');
+const mCanvas = document.getElementById('milestoneCanvas');
+const mCtx = mCanvas.getContext('2d');
+const mLine1 = document.getElementById('milestoneLine1');
+const mLine2 = document.getElementById('milestoneLine2');
+let mParticles = [];
+let mRafId = null;
+let mSpawnTimer = null;
+let mHideTimer = null;
+const GOLD_COLORS = ['#f4c9a0','#fff2d8','#ffdf91','#ff8aa3'];
+
+function mResize(){ mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
+mResize();
+window.addEventListener('resize', mResize);
+
+function drawHeartShape(ctx, size){
+  const s = size/16;
+  ctx.beginPath();
+  ctx.moveTo(0, 4*s);
+  ctx.bezierCurveTo(0,-2*s, -8*s,-2*s, -8*s,4*s);
+  ctx.bezierCurveTo(-8*s,9*s, 0,12*s, 0,16*s);
+  ctx.bezierCurveTo(0,12*s, 8*s,9*s, 8*s,4*s);
+  ctx.bezierCurveTo(8*s,-2*s, 0,-2*s, 0,4*s);
+  ctx.fill();
+}
+
+function spawnHeartP(){
+  mParticles.push({ type:'heart',
+    x:Math.random()*mCanvas.width, y:-24,
+    vy:1+Math.random()*1.6, vx:(Math.random()-0.5)*0.6,
+    rot:Math.random()*Math.PI*2, vrot:(Math.random()-0.5)*0.04,
+    size:10+Math.random()*14,
+    color:FW_COLORS[Math.floor(Math.random()*FW_COLORS.length)], alpha:1 });
+}
+function spawnBalloonP(){
+  mParticles.push({ type:'balloon',
+    x:Math.random()*mCanvas.width, y:mCanvas.height+30,
+    vy:-(0.8+Math.random()*1.2), sway:Math.random()*Math.PI*2,
+    size:16+Math.random()*10,
+    color:FW_COLORS[Math.floor(Math.random()*FW_COLORS.length)], alpha:1 });
+}
+function spawnStarP(){
+  mParticles.push({ type:'star',
+    x:Math.random()*mCanvas.width, y:Math.random()*mCanvas.height*0.85,
+    tw:Math.random()*Math.PI*2, size:1+Math.random()*2.4, life:0 });
+}
+function spawnPetalP(){
+  mParticles.push({ type:'petal',
+    x:Math.random()*mCanvas.width, y:-24,
+    vy:0.6+Math.random()*1, sway:Math.random()*Math.PI*2, swaySpeed:0.02+Math.random()*0.02,
+    rot:Math.random()*Math.PI*2, vrot:(Math.random()-0.5)*0.05,
+    size:8+Math.random()*8, alpha:1 });
+}
+function spawnBubbleP(){
+  mParticles.push({ type:'bubble',
+    x:Math.random()*mCanvas.width, y:mCanvas.height+20,
+    vy:-(0.6+Math.random()*1), sway:Math.random()*Math.PI*2,
+    size:6+Math.random()*14, alpha:0.75 });
+}
+function spawnFireworkBurstP(colors){
+  const x = mCanvas.width*(0.18+Math.random()*0.64);
+  const y = mCanvas.height*(0.16+Math.random()*0.4);
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  const count = 34+Math.floor(Math.random()*14);
+  for(let i=0;i<count;i++){
+    const angle = (Math.PI*2)*(i/count) + Math.random()*0.3;
+    const speed = 1.6+Math.random()*2.6;
+    mParticles.push({ type:'spark', x, y,
+      vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed,
+      alpha:1, color, size:1.6+Math.random()*1.6 });
+  }
+}
+
+const MILESTONE_THEMES = {
+  hearts:         { spawn:spawnHeartP,   interval:90,  initial:8 },
+  balloons:       { spawn:spawnBalloonP, interval:260, initial:6 },
+  stars:          { spawn:spawnStarP,    interval:55,  initial:26 },
+  petals:         { spawn:spawnPetalP,   interval:110, initial:8 },
+  bubbles:        { spawn:spawnBubbleP,  interval:170, initial:8 },
+  'fireworks-gold': { spawn:()=>spawnFireworkBurstP(GOLD_COLORS), interval:550, initial:1 },
+};
+
+function mLoop(){
+  mCtx.clearRect(0,0,mCanvas.width,mCanvas.height);
+  for(let i=mParticles.length-1;i>=0;i--){
+    const p = mParticles[i];
+    if(p.type==='heart'){
+      p.y+=p.vy; p.x+=p.vx; p.rot+=p.vrot;
+      if(p.y>mCanvas.height+30){ mParticles.splice(i,1); continue; }
+      mCtx.save(); mCtx.translate(p.x,p.y); mCtx.rotate(p.rot);
+      mCtx.globalAlpha=p.alpha; mCtx.fillStyle=p.color;
+      mCtx.shadowColor=p.color; mCtx.shadowBlur=10;
+      drawHeartShape(mCtx,p.size);
+      mCtx.restore();
+    }else if(p.type==='balloon'){
+      p.sway+=0.03; p.y+=p.vy; p.x+=Math.sin(p.sway)*0.6;
+      if(p.y<-40){ mParticles.splice(i,1); continue; }
+      mCtx.save();
+      mCtx.globalAlpha=p.alpha; mCtx.fillStyle=p.color;
+      mCtx.shadowColor=p.color; mCtx.shadowBlur=12;
+      mCtx.beginPath(); mCtx.ellipse(p.x,p.y,p.size*0.72,p.size,0,0,Math.PI*2); mCtx.fill();
+      mCtx.strokeStyle='rgba(255,255,255,0.35)'; mCtx.lineWidth=1;
+      mCtx.beginPath(); mCtx.moveTo(p.x,p.y+p.size); mCtx.lineTo(p.x,p.y+p.size+22); mCtx.stroke();
+      mCtx.restore();
+    }else if(p.type==='star'){
+      p.tw+=0.06; p.life++;
+      const a = 0.3+0.7*Math.abs(Math.sin(p.tw));
+      mCtx.globalAlpha=a; mCtx.fillStyle='#fff2d8';
+      mCtx.shadowColor='#f4c9a0'; mCtx.shadowBlur=8;
+      mCtx.beginPath(); mCtx.arc(p.x,p.y,p.size,0,Math.PI*2); mCtx.fill();
+      if(p.life>260){ mParticles.splice(i,1); continue; }
+    }else if(p.type==='petal'){
+      p.sway+=p.swaySpeed; p.y+=p.vy; p.x+=Math.sin(p.sway)*0.9; p.rot+=p.vrot;
+      if(p.y>mCanvas.height+30){ mParticles.splice(i,1); continue; }
+      mCtx.save(); mCtx.translate(p.x,p.y); mCtx.rotate(p.rot);
+      mCtx.globalAlpha=p.alpha; mCtx.fillStyle='#ff9fae';
+      mCtx.shadowColor='#ff9fae'; mCtx.shadowBlur=6;
+      mCtx.beginPath(); mCtx.ellipse(0,0,p.size*0.55,p.size,0,0,Math.PI*2); mCtx.fill();
+      mCtx.restore();
+    }else if(p.type==='bubble'){
+      p.sway+=0.025; p.y+=p.vy; p.x+=Math.sin(p.sway)*0.5;
+      if(p.y<-30){ mParticles.splice(i,1); continue; }
+      mCtx.save();
+      mCtx.globalAlpha=p.alpha;
+      mCtx.strokeStyle='rgba(255,255,255,0.55)'; mCtx.lineWidth=1.2;
+      mCtx.beginPath(); mCtx.arc(p.x,p.y,p.size,0,Math.PI*2); mCtx.stroke();
+      mCtx.fillStyle='rgba(255,255,255,0.08)'; mCtx.fill();
+      mCtx.restore();
+    }else if(p.type==='spark'){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.vx*=0.985; p.alpha-=0.014;
+      if(p.alpha<=0){ mParticles.splice(i,1); continue; }
+      mCtx.globalAlpha=Math.max(p.alpha,0); mCtx.fillStyle=p.color;
+      mCtx.shadowColor=p.color; mCtx.shadowBlur=8;
+      mCtx.beginPath(); mCtx.arc(p.x,p.y,p.size,0,Math.PI*2); mCtx.fill();
+    }
+  }
+  mCtx.globalAlpha=1; mCtx.shadowBlur=0;
+  mRafId = requestAnimationFrame(mLoop);
+}
+
+function startMilestoneParticles(theme){
+  mResize();
+  mParticles = [];
+  const cfg = MILESTONE_THEMES[theme];
+  if(!cfg) return;
+  for(let i=0;i<cfg.initial;i++) cfg.spawn();
+  mSpawnTimer = setInterval(cfg.spawn, cfg.interval);
+  if(!mRafId) mLoop();
+}
+function stopMilestoneParticles(){
+  clearInterval(mSpawnTimer); mSpawnTimer=null;
+  cancelAnimationFrame(mRafId); mRafId=null;
+  mParticles=[];
+  mCtx.clearRect(0,0,mCanvas.width,mCanvas.height);
+}
+
+const MILESTONE_DURATION = 6400; // ms que dura cada animación de hito en pantalla
+
+function playMilestone(m){
+  clearTimeout(mHideTimer);
+  milestoneEl.classList.remove('show');
+  void milestoneEl.offsetWidth; // reflow para reiniciar la animación del texto
+  mLine1.textContent = m.line1;
+  mLine2.textContent = m.line2;
+  milestoneEl.classList.add('show');
+  startMilestoneParticles(m.theme);
+  mHideTimer = setTimeout(()=>{
+    milestoneEl.classList.remove('show');
+    stopMilestoneParticles();
+  }, MILESTONE_DURATION);
+}
+milestoneEl.addEventListener('click', ()=>{
+  clearTimeout(mHideTimer);
+  milestoneEl.classList.remove('show');
+  stopMilestoneParticles();
+});
+
+/* Revisa cada segundo (desde tick()) si ya se cumplió algún hito nuevo,
+   y lo dispara automáticamente una sola vez por navegador. */
+function checkMilestones(now){
+  MILESTONES.forEach(m=>{
+    if(m.shown) return;
+    if(now >= m.date){
+      m.shown = true;
+      try{ localStorage.setItem('hito-'+m.key+'-mostrado', '1'); }catch(e){}
+      playMilestone(m);
+    }
+  });
+}
+
+/* =========================================================
+   LISTA DE ANIMACIONES — modal para elegir a mano cuál hito ver.
+   adminMode = true  -> se ven y se pueden abrir TODOS los hitos
+                        (incluso los que todavía no llegan), para
+                        que puedas revisar cómo quedan.
+   adminMode = false -> (botón del corazón del pie de página) solo
+                        se pueden abrir los hitos ya cumplidos o
+                        que ya se mostraron alguna vez; los demás
+                        aparecen bloqueados.
+   ========================================================= */
+const animListModal = document.getElementById('animListModal');
+const animListItems = document.getElementById('animListItems');
+
+function addAnimListButton(label, unlocked, onPlay){
+  const btn = document.createElement('button');
+  btn.className = 'admin-panel-btn anim-list-btn';
+  btn.textContent = unlocked ? label : (label + ' 🔒');
+  if(unlocked){
+    btn.addEventListener('click', ()=>{
+      animListModal.classList.remove('show');
+      onPlay();
+    });
+  }else{
+    btn.disabled = true;
+    btn.classList.add('anim-list-locked');
+  }
+  animListItems.appendChild(btn);
+}
+
+function openAnimList(adminMode){
+  animListItems.innerHTML = '';
+  const now = new Date();
+
+  addAnimListButton('Felices 6 meses',
+    adminMode || now >= SIX_MONTHS_DATE || sixMonthsShown,
+    playSixMonthsAnimation);
+
+  MILESTONES.forEach(m=>{
+    addAnimListButton(m.line1,
+      adminMode || now >= m.date || m.shown,
+      ()=> playMilestone(m));
+  });
+
+  animListModal.classList.add('show');
+}
+document.getElementById('animListClose').addEventListener('click', ()=>{
+  animListModal.classList.remove('show');
+});
+
 /* Botón discreto para previsualizar la animación cuando quieras, sin que
-   afecte el disparo automático del día real (no toca localStorage). */
+   afecte el disparo automático del día real (no toca localStorage).
+   Abre la lista en modo restringido: solo hitos ya cumplidos o vistos. */
 const previewBtn = document.getElementById('previewSixBtn');
 if(previewBtn){
-  previewBtn.addEventListener('click', playSixMonthsAnimation);
+  previewBtn.addEventListener('click', ()=> openAnimList(false));
 }
 
 tick();
@@ -510,6 +779,7 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
     localStorage.removeItem('puerta-superada');
     localStorage.removeItem('hannah-respuestas');
     localStorage.removeItem('seis-meses-mostrado');
+    MILESTONES.forEach(m=> localStorage.removeItem('hito-'+m.key+'-mostrado'));
   }catch(e){}
   location.reload();
 });
@@ -607,6 +877,7 @@ document.getElementById('adminSkipGate').addEventListener('click', ()=>{
   setTimeout(()=>{ gateEl.style.display = 'none'; }, 700);
 });
 document.getElementById('adminPreviewSix').addEventListener('click', playSixMonthsAnimation);
+document.getElementById('adminViewAnims').addEventListener('click', ()=> openAnimList(true));
 document.getElementById('adminRestartGate').addEventListener('click', ()=>{
   document.getElementById('restartGateBtn').click();
 });

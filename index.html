@@ -44,6 +44,7 @@
   <div class="admin-panel-title">Modo admin</div>
   <button class="admin-panel-btn" id="adminSkipGate">Saltar preguntas</button>
   <button class="admin-panel-btn" id="adminPreviewSix">Ver animación 6 meses</button>
+  <button class="admin-panel-btn" id="adminViewAnims">Ver animaciones</button>
   <button class="admin-panel-btn" id="adminRestartGate">Volver a inicio</button>
   <button class="admin-panel-btn" id="adminResetAll">Reiniciar todo</button>
   <button class="admin-panel-btn admin-panel-close" id="adminLogout">Cerrar sesión</button>
@@ -118,6 +119,33 @@
   <div class="six-text">
     <span class="six-text-line1">Felices 6 meses</span>
     <span class="six-text-line2">te amo</span>
+  </div>
+</div>
+
+<!-- ANIMACIONES DE HITOS: 7, 8, 9, 10, 11 meses y 1 año.
+     Es una sola pantalla reusable: script.js cambia el texto y el tipo
+     de partículas (corazones, globos, estrellas, pétalos, burbujas o
+     fuegos dorados) según el hito que corresponda. Se dispara sola
+     cuando se cumple la fecha exacta, o se puede elegir a mano desde
+     el botón "Ver animaciones" (admin) o el corazoncito del pie de
+     página (para Hannah, solo con los hitos ya cumplidos). -->
+<div id="milestoneOverlay">
+  <canvas id="milestoneCanvas"></canvas>
+  <div class="milestone-text">
+    <span class="milestone-line1" id="milestoneLine1"></span>
+    <span class="milestone-line2" id="milestoneLine2"></span>
+  </div>
+</div>
+
+<!-- LISTA DE ANIMACIONES: modal para elegir cuál hito ver.
+     En modo admin se ven todos los hitos (futuros incluidos).
+     Desde el corazoncito del pie de página solo se ven los hitos
+     que ya se cumplieron o que ya se mostraron alguna vez. -->
+<div id="animListModal">
+  <div class="anim-list-box">
+    <div class="anim-list-title">Animaciones</div>
+    <div class="anim-list-items" id="animListItems"></div>
+    <button class="reset-btn" id="animListClose">Cerrar</button>
   </div>
 </div>
 

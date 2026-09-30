@@ -877,6 +877,98 @@ footer .heartmark{ color:var(--rose); font-size:0.9rem; }
   100%{ background-position:220% center; }
 }
 
+/* =========================================================================
+   OVERLAY GENÉRICO DE HITOS — 7, 8, 9, 10, 11 meses y 1 año.
+   Es la misma pantalla para los seis hitos: solo cambia el texto (lo
+   pone script.js) y qué partículas dibuja el canvas (corazones, globos,
+   estrellas, pétalos, burbujas o fuegos dorados, según MILESTONES en
+   script.js). Los 6 meses tienen su propia animación aparte (arriba,
+   con la parejita) y no usan este overlay.
+   ========================================================================= */
+#milestoneOverlay{
+  position:fixed; inset:0; z-index:60;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(ellipse at 50% 35%, #2a0d1e 0%, rgba(10,4,16,0.94) 55%, rgba(5,2,8,0.97) 100%);
+  opacity:0;
+  overflow:hidden;
+  pointer-events:none;
+  transition:opacity 0.8s ease;
+}
+#milestoneOverlay.show{ opacity:1; pointer-events:auto; } /* JS agrega esta clase para mostrarla */
+
+#milestoneCanvas{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  pointer-events:none;
+}
+
+.milestone-text{
+  position:relative;
+  text-align:center;
+  z-index:1;
+  opacity:0;
+}
+#milestoneOverlay.show .milestone-text{
+  animation:sixTextIn 1.1s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:0.4s;
+}
+.milestone-line1{
+  display:block;
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic;
+  font-size:clamp(1.15rem,4vw,1.6rem);
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  background:linear-gradient(90deg, var(--gold), #fff2d8 45%, var(--gold));
+  background-size:220% auto;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:shine 3.2s linear infinite;
+}
+.milestone-line2{
+  display:block;
+  font-family:'Great Vibes', cursive;
+  font-size:clamp(3rem,13vw,5rem);
+  line-height:1;
+  margin-top:0.2rem;
+  color:var(--rose);
+  text-shadow:0 0 22px rgba(255,80,120,0.65), 0 0 55px rgba(255,80,120,0.35);
+}
+
+/* =========================================================================
+   LISTA DE ANIMACIONES — modal para elegir a mano cuál hito ver.
+   Mismo estilo visual que el login de admin, para que se sienta parte
+   de la misma página.
+   ========================================================================= */
+#animListModal{
+  position:fixed; inset:0; z-index:95;
+  display:flex; align-items:center; justify-content:center;
+  padding:6vw;
+  background:rgba(5,2,8,0.92);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+#animListModal.show{ opacity:1; pointer-events:auto; }
+.anim-list-box{
+  max-width:320px; width:100%; text-align:center;
+  display:flex; flex-direction:column; gap:0.6rem;
+  background:linear-gradient(165deg, rgba(255,77,115,0.10), rgba(244,201,160,0.05)), var(--bg-wine);
+  border:1px solid rgba(244,201,160,0.25);
+  border-radius:12px;
+  padding:1.6rem 1.4rem;
+  max-height:82vh;
+  overflow-y:auto;
+}
+.anim-list-title{
+  font-size:0.66rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:0.3rem;
+}
+.anim-list-items{ display:flex; flex-direction:column; gap:0.5rem; }
+.anim-list-btn{ width:100%; }
+/* hito todavía no cumplido y nunca visto: se muestra pero no se puede abrir */
+.anim-list-locked{ opacity:0.4; cursor:not-allowed; }
+.anim-list-close-row{ margin-top:0.4rem; }
+
 /* Ajustes finos para pantallas de celular chicas */
 @media (max-width:520px){
   .clock{ gap:1rem; }
