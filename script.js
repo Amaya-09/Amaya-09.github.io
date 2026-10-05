@@ -775,7 +775,7 @@ document.getElementById('restartGateBtn').addEventListener('click', ()=>{
 
 /* ---------- REINICIAR TODO ---------- */
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  const seguro = confirm('¿Reiniciar todo? Esto borrará la puerta superada, las respuestas guardadas y la animación de 6 meses en este navegador.');
+  const seguro = confirm('¿Reiniciar todo? Esto borrará la puerta superada, las respuestas guardadas y la animación de meses en este navegador.');
   if(!seguro) return;
   try{
     localStorage.removeItem('puerta-superada');
