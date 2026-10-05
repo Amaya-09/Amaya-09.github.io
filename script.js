@@ -657,6 +657,8 @@ const PHOTOS = [
     note:'Llegar a este quinto mes me ha demostrado que lo bonito de nuestra relación no solo se da por suerte, sino por el esfuerzo y las ganas que ambos le ponemos día a día. Gracias por cuidar lo nuestro, por estar presente y por demostrarme que con ganas y trabajo en equipo podemos lograrlo todo.' },
   { file:'foto6.jpeg', month:'Agosto 2026',   caption:'Seis meses, un solo corazón.',
     note:'Y llegamos a agosto: seis meses de nosotros. Seis meses de aprender a querernos mejor cada día, de reír, de crecer juntos y de construir algo que se siente cada vez más de los dos. Feliz seis meses, mi amor — esto apenas empieza.' },
+  { file:'foto7.jpg', month:'Septiembre 2026', caption:'Siete meses juntos.',
+    note:'Escribe aquí el recuerdo de septiembre.' },
 ];
 
 const galleryGrid = document.getElementById('gallery-grid');
@@ -876,7 +878,6 @@ document.getElementById('adminSkipGate').addEventListener('click', ()=>{
   gateEl.classList.add('gate-hidden');
   setTimeout(()=>{ gateEl.style.display = 'none'; }, 700);
 });
-document.getElementById('adminPreviewSix').addEventListener('click', playSixMonthsAnimation);
 document.getElementById('adminViewAnims').addEventListener('click', ()=> openAnimList(true));
 document.getElementById('adminRestartGate').addEventListener('click', ()=>{
   document.getElementById('restartGateBtn').click();
